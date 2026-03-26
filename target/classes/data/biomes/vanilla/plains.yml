@@ -1,0 +1,83 @@
+# ==========================================================
+# BIOME: OVA (Plains)
+# ==========================================================
+name: "Plains"
+temperature: 0.5
+humidity: 0.35
+color-style: "NORMAL"
+
+terrain:
+  base-height: 64
+  height-variation: 10  # Cok hafif, insani yormayan kucuk tumsekler
+  roughness: 0.005      # Neredeyse dumduz, kaymaksiz bir arazi
+
+blocks:
+  sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)
+  surface:
+    - "minecraft:grass_block:85"  # %85 ihtimalle normal çimen
+    - "minecraft:coarse_dirt:10"  # %10 ihtimalle kurumuş toprak (Çeşitlilik katar)
+    - "minecraft:podzol:5"        # %5 ihtimalle podzol
+  sub:
+    - "minecraft:dirt:90"         # Alt katman %90 normal toprak
+    - "minecraft:coarse_dirt:10"
+  deep:
+    - "minecraft:stone:95"        # En alt katman %95 Taş
+    - "minecraft:andesite:5"      # %5 ihtimalle aralara Andezit serpiştirir
+
+flora:
+  grass-chance: 70 # Her yer uzun otlarla kapli
+  flowers:
+    chance: 15
+    types:
+      - "minecraft:cornflower"
+      - "minecraft:azure_bluet"
+
+schematics:
+  trees:
+    enabled: false
+
+# --- MAĞARALAR (3D Noise & Vanilla) ---
+caves:
+  mode: "CUSTOM"
+  noise-frequency: 0.040   # 0.025 devasa anlamsız odalar yapar. 0.040 ise kıvrımlı doğal tüneller yapar!
+  threshold: 0.60          # 0.45 çok delik açar. 0.60 sadece belirgin, gerçekçi mağaraları açar.
+  dynamic-lava: true
+  base-lava-level: -54
+
+# --- MADENLER (1.18 Ucgensel Matematik) ---
+ores:
+  coal:
+    block: "minecraft:coal_ore"
+    type: "triangle" # 'uniform' (her yerde eşit) veya 'triangle' (merkezde yoğun)
+    min-height: 0
+    max-height: 128
+    center-height: 60
+    vein-size: 10
+    chance: 30 # Chunk başına deneme şansı
+
+  iron:
+    block: "minecraft:iron_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 64
+    center-height: 16
+    vein-size: 8
+    chance: 20
+
+  gold:
+    block: "minecraft:gold_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 32
+    center-height: -16
+    vein-size: 6
+    chance: 8
+
+  diamond:
+    block: "minecraft:diamond_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 16
+    center-height: -58
+    vein-size: 4
+    chance: 6

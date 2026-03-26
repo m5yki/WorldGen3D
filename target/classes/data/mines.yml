@@ -1,0 +1,31 @@
+# ==========================================================
+# WorldGen3D - Global Maden (Ore) Ayarlari
+# ==========================================================
+mines:
+  coal:
+    block: "minecraft:coal_ore"
+    min-height: 0
+    max-height: 128
+    vein-size: 10
+    chance: 15 # Her chunk'ta (16x16) bulunma şansı / sıklığı
+
+  iron:
+    block: "minecraft:iron_ore"
+    min-height: -64
+    max-height: 64
+    vein-size: 8
+    chance: 12
+
+  gold:
+    block: "minecraft:gold_ore"
+    min-height: -64
+    max-height: 32
+    vein-size: 6
+    chance: 5
+
+  diamond:
+    block: "minecraft:diamond_ore"
+    min-height: -64
+    max-height: 16
+    vein-size: 4
+    chance: 3

@@ -1,0 +1,8 @@
+prefix: "&8[&bWorldGen3D&8] &r"
+error-missing-fawe: "&cKRITIK HATA: Hedef plugin (FastAsyncWorldEdit) bulunamadigi icin motor kapatiliyor!"
+error-missing-itemsadder: "&eUYARI: ItemsAdder bulunamadi! Ozel bloklar Vanilla bloklara donusecek."
+fawe-hook-success: "&aFAWE bulundu! Asenkron cizim motoru devrede."
+itemsadder-hook-success: "&aItemsAdder bulundu! Ozel blok destegi aktif."
+engine-starting: "&e[YUKLENIYOR] Cekirdek motor baslatiliyor..."
+engine-ready: "&aMotor hazir! Dunya uretimi icin bekleniyor."
+engine-disabled: "&cMotor guvenli bir sekilde kapatildi. Gorusmek uzere, Mimar!"

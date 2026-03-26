@@ -1,0 +1,99 @@
+# ==========================================================
+# BIOME: RENKLI OKYANUS (Warm Ocean)
+# ==========================================================
+name: "Ocean"
+temperature: 0.4
+humidity: 0.6
+color-style: "AQUA"
+
+terrain:
+  base-height: 35       # Okyanus tabani cok derinde baslar
+  height-variation: 15  # Deniz altindaki kucuk tepecikler
+  roughness: 0.010      # Yumusak deniz tabani
+  water-level: 62       # 35 ile 62 arasini suyla dolduracagiz!
+
+blocks:
+  sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)
+  surface:
+    - "minecraft:grass_block:85"  # %85 ihtimalle normal çimen
+    - "minecraft:coarse_dirt:10"  # %10 ihtimalle kurumuş toprak (Çeşitlilik katar)
+    - "minecraft:podzol:5"        # %5 ihtimalle podzol
+  sub:
+    - "minecraft:dirt:90"         # Alt katman %90 normal toprak
+    - "minecraft:coarse_dirt:10"
+  deep:
+    - "minecraft:stone:95"        # En alt katman %95 Taş
+    - "minecraft:andesite:5"      # %5 ihtimalle aralara Andezit serpiştirir
+
+# Deniz altini susleyecek ozel bloklar
+ocean-floor:
+  enabled: true
+  chance: 15
+  blocks:
+    - "minecraft:brain_coral_block"
+    - "minecraft:tube_coral_block"
+    - "minecraft:bubble_coral_block"
+    - "minecraft:fire_coral_block"
+
+schematics:
+  trees:
+    enabled: false
+
+# --- MAĞARALAR (3D Noise & Vanilla) ---
+caves:
+  mode: "CUSTOM"           # VANILLA (Minecraft'ın orijinali), CUSTOM (Bizim 3D motor), NONE (Mağara yok)
+  noise-frequency: 0.035   # 0.035 ile 0.045 arası iyidir. Tünelleri daraltır ve uzatır.
+  threshold: 0.65          # 0.65 (veya 0.70) yaparsan her yer delik deşik olmaz, sadece nadir ve belirgin mağaralar oluşur!
+  dynamic-lava: true       # Lav seviyesi sabit kalmasın, dalgalansın!
+  base-lava-level: -54     # Lavın ortalama başladığı derinlik
+
+# --- MADENLER (1.18 Ucgensel Matematik) ---
+ores:
+  coal:
+    block: "minecraft:coal_ore"
+    type: "triangle" # 'uniform' (her yerde eşit) veya 'triangle' (merkezde yoğun)
+    min-height: 0
+    max-height: 128
+    center-height: 60
+    vein-size: 10
+    chance: 30 # Chunk başına deneme şansı
+
+  iron:
+    block: "minecraft:iron_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 64
+    center-height: 16
+    vein-size: 8
+    chance: 20
+
+  gold:
+    block: "minecraft:gold_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 32
+    center-height: -16
+    vein-size: 6
+    chance: 8
+
+  diamond:
+    block: "minecraft:diamond_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 16
+    center-height: -58
+    vein-size: 4
+    chance: 6
+
+flora:
+  grass-chance: 10
+  flowers:
+    chance: 5
+    types:
+      - "minecraft:dandelion"
+  # YENİ: Su Altı ve Sahil Biyoçeşitliliği!
+  water-flora:
+    seagrass-chance: 40    # Normal kısa deniz çayırı
+    kelp-chance: 20        # Su yüzeyine kadar uzayan dev yosunlar
+  coastal-flora:
+    sugarcane-chance: 15   # Kıyılarda kum/toprak üzerinde çıkacak şeker kamışları

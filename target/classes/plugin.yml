@@ -1,0 +1,38 @@
+# ==========================================================
+# WorldGen3D - Core Engine Configuration
+# ==========================================================
+
+name: WorldGen3D
+version: '3.0-BETA'
+main: me.maykitron.worldgen3d.WorldGen3D
+api-version: '1.21'
+
+# Motorun dünyalar yüklenmeden HEMEN ÖNCE çalışmasını sağlar (Çok Kritik!)
+load: STARTUP
+
+authors: [ Maykitron ]
+website: 'https://github.com/Maykitron/WorldGen3D'
+description: 'Yeni nesil, 3 Boyutlu devasa arazi ve dunya motoru.'
+
+# ZORUNLU KÜTÜPHANELER
+depend:
+  - FastAsyncWorldEdit
+
+# İSTEĞE BAĞLI DESTEKLER (Bağlantı kancalarımız)
+softdepend:
+  - ItemsAdder
+  - Multiverse-Core
+
+# EKLENTİ KOMUTLARI
+commands:
+  worldgen3d:
+    description: WorldGen3D Ana Komutu ve Yonetim Paneli
+    aliases: [wgen, wg3d]
+    permission: worldgen3d.admin
+    usage: 'Yanlis kullanim! Duzgunu: /<command> [setup|studio|debug]'
+
+# YETKİLENDİRME SİSTEMİ
+permissions:
+  worldgen3d.admin:
+    description: WorldGen3D motorunun tum yonetim ve debug yetkileri.
+    default: op

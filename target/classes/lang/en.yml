@@ -1,0 +1,8 @@
+prefix: "&8[&bWorldGen3D&8] &r"
+error-missing-fawe: "&cCRITICAL ERROR: Target plugin (FastAsyncWorldEdit) not found. Shutting down engine!"
+error-missing-itemsadder: "&eWARNING: ItemsAdder not found! Custom blocks will fallback to Vanilla blocks."
+fawe-hook-success: "&aFAWE found! Async generation engine is active."
+itemsadder-hook-success: "&aItemsAdder found! Custom block support is active."
+engine-starting: "&e[LOADING] Core engine is starting..."
+engine-ready: "&aEngine is ready! Waiting for world generation."
+engine-disabled: "&cEngine has been safely disabled. See you, Architect!"

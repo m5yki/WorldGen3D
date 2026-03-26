@@ -1,0 +1,12 @@
+# ==========================================================
+# WorldGen3D - Core Settings
+# ==========================================================
+
+settings:
+  # Eklenti dili / Plugin language (tr, en)
+  language: tr
+
+  # Motor Modu (VANILLA veya CUSTOM)
+  # VANILLA: Sadece eklentinin kendi kusursuz 8 biyomunu kullanir.
+  # CUSTOM: Sadece senin 'custom' klasorune koydugun ozel biyomlari kullanir.
+  generator-mode: VANILLA
