@@ -30,9 +30,15 @@ public class PackManager {
         if (!vanillaFolder.exists()) vanillaFolder.mkdirs();
         if (!customFolder.exists()) customFolder.mkdirs();
 
-        // Vanilla biyomları (o yazdığımız 8 dosyayı) dışarı çıkartıyoruz
-        String[] defaultBiomes = {"plains.yml", "desert.yml", "forest.yml", "jungle.yml",
-                "savanna.yml", "snowy_tundra.yml", "taiga.yml", "ocean.yml"};
+        // ==========================================================
+        // FABRİKA AYARLARI: İlk kurulumda dışarı çıkartılacak dosyalar!
+        // YENİ EKLENENLER: beach.yml, warm_ocean.yml, frozen_ocean.yml
+        // ==========================================================
+        String[] defaultBiomes = {
+                "plains.yml", "desert.yml", "forest.yml", "jungle.yml",
+                "savanna.yml", "snowy_tundra.yml", "taiga.yml", "ocean.yml",
+                "beach.yml", "warm_ocean.yml", "frozen_ocean.yml"
+        };
 
         for (String biome : defaultBiomes) {
             File targetFile = new File(vanillaFolder, biome);
@@ -59,7 +65,7 @@ public class PackManager {
             return;
         }
 
-        // Bulunan .yml dosyalarını hafızaya ekle
+        // Bulunan .yml dosyalarını hafızaya ekle (Dinamik Yükleme)
         for (File file : files) {
             if (file.getName().endsWith(".yml")) {
                 loadedBiomes.add(file);

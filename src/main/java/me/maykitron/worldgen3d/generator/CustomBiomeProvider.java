@@ -19,8 +19,11 @@ public class CustomBiomeProvider extends BiomeProvider {
     private final List<BiomeData> loadedBiomes = new ArrayList<>();
     private SimplexOctaveGenerator tempNoise;
     private SimplexOctaveGenerator humidNoise;
-    private SimplexOctaveGenerator continentNoise; // YENİ: Devasa Kıta Motoru
+    private SimplexOctaveGenerator continentNoise;
     private boolean isInitialized = false;
+
+    // YENİ: Şimşek hızında okuma için 100x100'lük önbellek haritası (Lookup Table)
+    private final String[][] biomeLookupTable = new String[101][101];
 
     public CustomBiomeProvider(WorldGen3D plugin) {
         this.plugin = plugin;
@@ -39,6 +42,34 @@ public class CustomBiomeProvider extends BiomeProvider {
         if (loadedBiomes.isEmpty()) {
             loadedBiomes.add(new BiomeData("Plains", 0.5, 0.5));
         }
+
+        // ==========================================================
+        // YENİ: MATEMATİK DÖNGÜSÜNÜ ÇÖPE ATAN ÖNBELLEK SİSTEMİ
+        // 0.0'dan 1.0'a kadar olan tüm sıcaklık/nem kombinasyonları için
+        // en yakın kara biyomu sunucu açılışında SADECE 1 KERE hesaplanır!
+        // ==========================================================
+        for (int t = 0; t <= 100; t++) {
+            for (int h = 0; h <= 100; h++) {
+                double tempVal = t / 100.0;
+                double humidVal = h / 100.0;
+
+                BiomeData closest = null;
+                double minDistance = Double.MAX_VALUE;
+
+                for (BiomeData data : loadedBiomes) {
+                    if (data.name.contains("Ocean") || data.name.contains("Beach")) continue; // Sular hariç
+
+                    // Math.pow yerine doğrudan çarpım çok daha hızlıdır
+                    double dist = ((tempVal - data.temp) * (tempVal - data.temp)) +
+                            ((humidVal - data.humid) * (humidVal - data.humid));
+                    if (dist < minDistance) {
+                        minDistance = dist;
+                        closest = data;
+                    }
+                }
+                biomeLookupTable[t][h] = closest != null ? closest.name : "Plains";
+            }
+        }
     }
 
     private void init(WorldInfo worldInfo) {
@@ -46,7 +77,7 @@ public class CustomBiomeProvider extends BiomeProvider {
         Random r = new Random(worldInfo.getSeed());
         tempNoise = new SimplexOctaveGenerator(r, 4);
         humidNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() + 1), 4);
-        continentNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 12L), 4); // Kıta gürültüsü
+        continentNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 12L), 4);
         isInitialized = true;
     }
 
@@ -54,7 +85,14 @@ public class CustomBiomeProvider extends BiomeProvider {
     @Override
     public Biome getBiome(@NotNull WorldInfo worldInfo, int x, int y, int z) {
         String customName = getCustomBiomeName(x, z).toLowerCase();
+
+        // Minecraft Vanilla eşleştirmeleri (F3 menüsünde düzgün görünmesi için)
+        if (customName.contains("warm_ocean")) return Biome.WARM_OCEAN;
+        if (customName.contains("frozen_ocean")) return Biome.FROZEN_OCEAN;
         if (customName.contains("ocean")) return Biome.OCEAN;
+        if (customName.contains("beach")) {
+            return customName.contains("snowy") ? Biome.SNOWY_BEACH : Biome.BEACH;
+        }
         if (customName.contains("jungle")) return Biome.JUNGLE;
         if (customName.contains("desert")) return Biome.DESERT;
         if (customName.contains("forest")) return Biome.FOREST;
@@ -67,46 +105,57 @@ public class CustomBiomeProvider extends BiomeProvider {
     @NotNull
     @Override
     public List<Biome> getBiomes(@NotNull WorldInfo worldInfo) {
-        return new ArrayList<>(List.of(Biome.PLAINS, Biome.OCEAN, Biome.JUNGLE, Biome.DESERT, Biome.FOREST, Biome.SNOWY_PLAINS, Biome.SAVANNA, Biome.TAIGA));
+        return new ArrayList<>(List.of(
+                Biome.PLAINS, Biome.OCEAN, Biome.WARM_OCEAN, Biome.FROZEN_OCEAN,
+                Biome.BEACH, Biome.SNOWY_BEACH, Biome.JUNGLE, Biome.DESERT,
+                Biome.FOREST, Biome.SNOWY_PLAINS, Biome.SAVANNA, Biome.TAIGA
+        ));
     }
 
     public String getCustomBiomeName(int x, int z) {
         if (tempNoise == null) return "Plains";
 
         // ==========================================================
-        // YENİ: KITA KONTROLÜ (Okyanusları Karalardan Ayırıyoruz)
-        // Frekansı 0.001 yaptık, yani kıtalar devasa boyutlarda olacak!
+        // 1. İKLİM DEĞERLERİNİ HESAPLA VE "ESNET" (Nadir biyomlar için)
+        // 1.5 ile çarparak dalga boyunu genişletiyoruz, böylece Çöl (0.95) ve Tundra (0.05) çıkabiliyor!
+        // ==========================================================
+        double rawTemp = tempNoise.noise(x * 0.002, z * 0.002, 0.5, 0.5, true) * 1.5;
+        double rawHumid = humidNoise.noise(x * 0.002, z * 0.002, 0.5, 0.5, true) * 1.5;
+
+        // Değerleri 0.0 ile 1.0 arasına hapsediyoruz (Clamp)
+        double temperature = Math.max(0.0, Math.min(1.0, (rawTemp + 1.0) / 2.0));
+        double humidity = Math.max(0.0, Math.min(1.0, (rawHumid + 1.0) / 2.0));
+
+        // ==========================================================
+        // 2. SU VE SAHİL SİSTEMİ (Derinlik Bazlı)
         // ==========================================================
         double continent = continentNoise.noise(x * 0.001, z * 0.001, 0.5, 0.5, true);
 
-        // Eğer değer -0.15'ten küçükse, sıcaklık/neme bakmaksızın burası KESİNLİKLE OKYANUS!
-        if (continent < -0.15) {
+        if (continent < -0.30) {
+            // DERİN OKYANUSLAR
+            if (temperature > 0.65) return "Warm_Ocean"; // İleride Warm_Deep_Ocean eklenebilir
+            if (temperature < 0.35) return "Frozen_Ocean";
             return "Ocean";
         }
-
-        // ==========================================================
-        // KARA BİYOMU SEÇİMİ (Okyanus olmayan devasa karalar için)
-        // ==========================================================
-        double temperature = tempNoise.noise(x * 0.002, z * 0.002, 0.5, 0.5, true);
-        double humidity = humidNoise.noise(x * 0.002, z * 0.002, 0.5, 0.5, true);
-
-        temperature = (temperature + 1.0) / 2.0;
-        humidity = (humidity + 1.0) / 2.0;
-
-        BiomeData closest = null;
-        double minDistance = Double.MAX_VALUE;
-
-        for (BiomeData data : loadedBiomes) {
-            // ÇOK ÖNEMLİ: Karalarda rastgele Okyanus çıkmasını yasaklıyoruz!
-            if (data.name.equalsIgnoreCase("Ocean")) continue;
-
-            double dist = Math.pow(temperature - data.temp, 2) + Math.pow(humidity - data.humid, 2);
-            if (dist < minDistance) {
-                minDistance = dist;
-                closest = data;
-            }
+        else if (continent < -0.05) {
+            // SIĞ OKYANUSLAR
+            if (temperature > 0.65) return "Warm_Ocean";
+            if (temperature < 0.35) return "Frozen_Ocean";
+            return "Ocean";
         }
-        return closest != null ? closest.name : "Plains";
+        else if (continent < 0.05) {
+            // SAHİLLER (Kumsal geçişleri)
+            return "Beach";
+        }
+
+        // ==========================================================
+        // 3. KARALAR (Şimşek Hızında O(1) Okuma!)
+        // ==========================================================
+        int tIdx = (int) (temperature * 100);
+        int hIdx = (int) (humidity * 100);
+
+        // For döngüsü yok! Direkt tablodan çekiyoruz.
+        return biomeLookupTable[tIdx][hIdx];
     }
 
     public void ensureInitialized(WorldInfo info) {

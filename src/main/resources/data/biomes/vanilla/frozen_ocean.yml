@@ -1,0 +1,45 @@
+name: "Frozen_Ocean"
+temperature: 0.1  # Çok Soğuk!
+humidity: 1.0     # Okyanus olduğu için nem en yüksekte
+color-style: "SNOWY"
+
+terrain:
+  type: "NORMAL"
+  base-height: 35
+  height-variation: 15
+  roughness: 0.010
+  water-level: 62
+
+river:
+  enabled: false
+
+blocks:
+  sub-depth: 4
+  surface:
+    - "minecraft:gravel:70"
+    - "minecraft:dirt:30"
+  sub:
+    - "minecraft:gravel:80"
+    - "minecraft:dirt:20"
+  deep:
+    - "minecraft:stone:95"
+    - "minecraft:andesite:5"
+
+ocean-floor:
+  enabled: true
+  chance: 30
+  blocks:
+    - "minecraft:blue_ice"
+    - "minecraft:packed_ice" # Deniz tabanından yükselen buz dağlarının kökleri
+
+flora:
+  grass-chance: 0
+  water-flora:
+    seagrass-chance: 10 # Soğuk sularda bitki örtüsü zayıftır
+    kelp-chance: 5
+
+caves:
+  mode: "CUSTOM"
+  noise-frequency: 0.035
+  threshold: 0.65
+  dynamic-lava: false # Buzlu okyanusun hemen altında lav çıkmasını engelledik

@@ -1,32 +1,40 @@
 # ==========================================================
-# BIOME: STANDART OKYANUS (Normal Ocean)
+# BIOME: SICAK OKYANUS (Warm Ocean)
 # ==========================================================
-name: "Ocean"
-temperature: 0.5  # Ne çok sıcak ne çok soğuk
-humidity: 1.0     # Maksimum nem
-color-style: "WATER"
+name: "Warm_Ocean"
+temperature: 0.8  # Sıcak sular
+humidity: 1.0
+color-style: "AQUA" # Turkuaz su rengi
 
 terrain:
   type: "NORMAL"
-  base-height: 35       # Derin okyanus tabanı
-  height-variation: 15  # Deniz altındaki tepecikler
-  roughness: 0.010      # Yumuşak deniz tabanı
-  water-level: 62       # 35 ile 62 arası suyla dolacak
+  base-height: 38       # Mercanların güneş görmesi için biraz daha sığ
+  height-variation: 12
+  roughness: 0.008
+  water-level: 62
 
 river:
-  enabled: false  # Okyanusun içinde nehir olmaz
+  enabled: false
 
 blocks:
-  sub-depth: 4
+  sub-depth: 3
   surface:
-    - "minecraft:gravel:60"
-    - "minecraft:sand:40"
+    - "minecraft:sand:100"  # Sadece beyaz kum
   sub:
-    - "minecraft:gravel:50"
-    - "minecraft:sand:50"
+    - "minecraft:sand:90"
+    - "minecraft:sandstone:10"
   deep:
-    - "minecraft:stone:95"
-    - "minecraft:andesite:5"
+    - "minecraft:stone:100"
+
+# Orijinal dosyandaki deniz altı süslemeleri
+ocean-floor:
+  enabled: true
+  chance: 25 # Mercan yoğunluğunu artırdım
+  blocks:
+    - "minecraft:brain_coral_block"
+    - "minecraft:tube_coral_block"
+    - "minecraft:bubble_coral_block"
+    - "minecraft:fire_coral_block"
 
 flora:
   grass-chance: 0
@@ -34,8 +42,10 @@ flora:
     chance: 0
     types: []
   water-flora:
-    seagrass-chance: 50    # Bolca deniz çayırı
-    kelp-chance: 30        # Yüzeye uzanan dev yosunlar
+    seagrass-chance: 40
+    kelp-chance: 5 # Sıcak sularda uzun yosunlar çok nadir olur
+  coastal-flora:
+    sugarcane-chance: 15
 
 schematics:
   trees:
@@ -45,7 +55,7 @@ caves:
   mode: "CUSTOM"
   noise-frequency: 0.035
   threshold: 0.65
-  dynamic-lava: false # Suyun hemen altında lav havuzu çıkmasını engelledik
+  dynamic-lava: false
 
 # --- YENİ MADENLER (Dinamik Damar & Mağara Temas Kontrolü) ---
 ores:

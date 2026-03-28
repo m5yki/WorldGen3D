@@ -1,68 +1,64 @@
 # ==========================================================
-# BIOME: RENKLI OKYANUS (Warm Ocean)
+# BIOME: STANDART OKYANUS (Normal Ocean)
 # ==========================================================
 name: "Ocean"
-temperature: 0.4
-humidity: 0.6
-color-style: "AQUA"
+temperature: 0.5  # Ne çok sıcak ne çok soğuk
+humidity: 1.0     # Maksimum nem
+color-style: "WATER"
 
 terrain:
   type: "NORMAL"
-  base-height: 35       # Okyanus tabani cok derinde baslar
-  height-variation: 15  # Deniz altindaki kucuk tepecikler
-  roughness: 0.010      # Yumusak deniz tabani
-  water-level: 62       # 35 ile 62 arasini suyla dolduracagiz!
+  base-height: 35       # Derin okyanus tabanı
+  height-variation: 15  # Deniz altındaki tepecikler
+  roughness: 0.010      # Yumuşak deniz tabanı
+  water-level: 62       # 35 ile 62 arası suyla dolacak
 
 river:
-  enabled: true   # true ise bu biyomdan nehir geçer, false ise kupkuru kalır.
-  width: 0.08     # Nehrin genişliği (0.05 dar dere, 0.12 devasa nehir)
-  depth: 16       # Nehrin arazinin içine kaç blok oyulacağı (derinlik)
+  enabled: false  # Okyanusun içinde nehir olmaz
 
 blocks:
-  sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)
+  sub-depth: 4
   surface:
-    - "minecraft:grass_block:85"  # %85 ihtimalle normal çimen
-    - "minecraft:coarse_dirt:10"  # %10 ihtimalle kurumuş toprak (Çeşitlilik katar)
-    - "minecraft:podzol:5"        # %5 ihtimalle podzol
+    - "minecraft:gravel:60"
+    - "minecraft:sand:40"
   sub:
-    - "minecraft:dirt:90"         # Alt katman %90 normal toprak
-    - "minecraft:coarse_dirt:10"
+    - "minecraft:gravel:50"
+    - "minecraft:sand:50"
   deep:
-    - "minecraft:stone:95"        # En alt katman %95 Taş
-    - "minecraft:andesite:5"      # %5 ihtimalle aralara Andezit serpiştirir
+    - "minecraft:stone:95"
+    - "minecraft:andesite:5"
 
-# Deniz altini susleyecek ozel bloklar
-ocean-floor:
-  enabled: true
-  chance: 15
-  blocks:
-    - "minecraft:brain_coral_block"
-    - "minecraft:tube_coral_block"
-    - "minecraft:bubble_coral_block"
-    - "minecraft:fire_coral_block"
+flora:
+  grass-chance: 0
+  flowers:
+    chance: 0
+    types: []
+  water-flora:
+    seagrass-chance: 50    # Bolca deniz çayırı
+    kelp-chance: 30        # Yüzeye uzanan dev yosunlar
 
 schematics:
   trees:
     enabled: false
 
-# --- MAĞARALAR (3D Noise & Vanilla) ---
 caves:
-  mode: "CUSTOM"           # VANILLA (Minecraft'ın orijinali), CUSTOM (Bizim 3D motor), NONE (Mağara yok)
-  noise-frequency: 0.035   # 0.035 ile 0.045 arası iyidir. Tünelleri daraltır ve uzatır.
-  threshold: 0.65          # 0.65 (veya 0.70) yaparsan her yer delik deşik olmaz, sadece nadir ve belirgin mağaralar oluşur!
-  dynamic-lava: true       # Lav seviyesi sabit kalmasın, dalgalansın!
-  base-lava-level: -54     # Lavın ortalama başladığı derinlik
+  mode: "CUSTOM"
+  noise-frequency: 0.035
+  threshold: 0.65
+  dynamic-lava: false # Suyun hemen altında lav havuzu çıkmasını engelledik
 
-# --- MADENLER (1.18 Ucgensel Matematik) ---
+# --- YENİ MADENLER (Dinamik Damar & Mağara Temas Kontrolü) ---
 ores:
   coal:
     block: "minecraft:coal_ore"
-    type: "triangle" # 'uniform' (her yerde eşit) veya 'triangle' (merkezde yoğun)
+    type: "triangle"
     min-height: 0
     max-height: 128
     center-height: 60
-    vein-size: 10
-    chance: 30 # Chunk başına deneme şansı
+    vein-size-min: 6
+    vein-size-max: 14
+    exposure-chance: 100
+    chance: 30
 
   iron:
     block: "minecraft:iron_ore"
@@ -70,7 +66,9 @@ ores:
     min-height: -64
     max-height: 64
     center-height: 16
-    vein-size: 8
+    vein-size-min: 4
+    vein-size-max: 9
+    exposure-chance: 80
     chance: 20
 
   gold:
@@ -79,7 +77,9 @@ ores:
     min-height: -64
     max-height: 32
     center-height: -16
-    vein-size: 6
+    vein-size-min: 3
+    vein-size-max: 7
+    exposure-chance: 50
     chance: 8
 
   diamond:
@@ -88,18 +88,7 @@ ores:
     min-height: -64
     max-height: 16
     center-height: -58
-    vein-size: 4
+    vein-size-min: 1
+    vein-size-max: 4
+    exposure-chance: 20
     chance: 6
-
-flora:
-  grass-chance: 10
-  flowers:
-    chance: 5
-    types:
-      - "minecraft:dandelion"
-  # YENİ: Su Altı ve Sahil Biyoçeşitliliği!
-  water-flora:
-    seagrass-chance: 40    # Normal kısa deniz çayırı
-    kelp-chance: 20        # Su yüzeyine kadar uzayan dev yosunlar
-  coastal-flora:
-    sugarcane-chance: 15   # Kıyılarda kum/toprak üzerinde çıkacak şeker kamışları

@@ -2,8 +2,8 @@
 # BIOME: ORMAN (Forest)
 # ==========================================================
 name: "Forest"
-temperature: 0.6
-humidity: 0.8
+temperature: 0.55
+humidity: 0.7
 color-style: "BRIGHT_GREEN"
 
 # --- Arazi Matematigi (3D Noise Ayarlari) ---
@@ -45,7 +45,7 @@ flora:
 schematics:
   trees:
     enabled: true
-    chance: 3 # Her blokta %3 ihtimalle agac cikarmayi dener
+    chance: 15 # Her blokta %3 ihtimalle agac cikarmayi dener
     files:
       - "vanilla/forest_tree1.schematic"
       - "vanilla/forest_tree2.schematic"

@@ -1,0 +1,38 @@
+name: "Beach"
+temperature: 0.6
+humidity: 0.6
+color-style: "NORMAL"
+
+terrain:
+  type: "SMOOTH"
+  base-height: 63       # Su seviyesinden (62) sadece 1 blok yukarısı
+  height-variation: 3   # Dümdüz, hafif eğimli bir kumsal
+  roughness: 0.003
+
+river:
+  enabled: false
+
+blocks:
+  sub-depth: 3
+  surface:
+    - "minecraft:sand:100"
+  sub:
+    - "minecraft:sand:80"
+    - "minecraft:sandstone:20"
+  deep:
+    - "minecraft:stone:100"
+
+flora:
+  grass-chance: 0
+  flowers:
+    chance: 0
+    types: []
+  coastal-flora:
+    sugarcane-chance: 25 # Kıyılarda bolca şeker kamışı
+
+schematics:
+  trees:
+    enabled: false
+
+caves:
+  mode: "NONE" # Sahilin altında dev mağaralar açılmaz ki kumlar çökmesin

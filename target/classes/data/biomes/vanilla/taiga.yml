@@ -2,8 +2,8 @@
 # BIOME: TAYGA (Taiga)
 # ==========================================================
 name: "Taiga"
-temperature: 0.2
-humidity: 0.7
+temperature: 0.25
+humidity: 0.6
 color-style: "DARK_GREEN"
 
 terrain:

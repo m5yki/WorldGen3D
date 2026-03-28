@@ -2,7 +2,7 @@
 # BIOME: KARLI TUNDRA (Snowy Tundra)
 # ==========================================================
 name: "Snowy_Tundra"
-temperature: 0.0
+temperature: 0.05
 humidity: 0.3
 
 terrain:

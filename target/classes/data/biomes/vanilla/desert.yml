@@ -2,8 +2,8 @@
 # BIOME: COL (Desert Dunes)
 # ==========================================================
 name: "Desert"
-temperature: 1.0
-humidity: 0.0
+temperature: 0.95
+humidity: 0.1
 
 terrain:
   type: "CANYON"

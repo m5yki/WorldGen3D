@@ -16,14 +16,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class CustomChunkGenerator extends ChunkGenerator {
 
     private final WorldGen3D plugin;
     private final CustomBiomeProvider biomeProvider;
-    private final List<TerrainData> loadedTerrainData = new ArrayList<>();
+
+    // YENİ OPTİMİZASYON: Listeler iptal, O(1) hızında saniyelik okuma için HashMap!
+    private final Map<String, TerrainData> terrainDataMap = new HashMap<>();
+    private TerrainData fallbackData;
 
     private final BiomeBlender biomeBlender;
     private SimplexOctaveGenerator heightNoise;
@@ -40,7 +45,7 @@ public class CustomChunkGenerator extends ChunkGenerator {
     public CustomChunkGenerator(WorldGen3D plugin, CustomBiomeProvider biomeProvider) {
         this.plugin = plugin;
         this.biomeProvider = biomeProvider;
-        this.biomeBlender = new BiomeBlender(biomeProvider, this);
+        this.biomeBlender = new BiomeBlender(this); // Sadece bu sınıfı gönderiyoruz
         loadTerrainDataFromYML();
     }
 
@@ -69,10 +74,14 @@ public class CustomChunkGenerator extends ChunkGenerator {
     }
 
     private void loadTerrainDataFromYML() {
-        loadedTerrainData.clear();
+        terrainDataMap.clear();
         for (File file : plugin.getPackManager().getLoadedBiomes()) {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-            loadedTerrainData.add(new TerrainData(config));
+            TerrainData data = new TerrainData(config);
+            terrainDataMap.put(data.name, data);
+
+            // Eğer fallbackData henüz atanmadıysa ilk yüklenen biyomu varsayılan olarak ayarla
+            if (fallbackData == null) fallbackData = data;
         }
     }
 
@@ -92,11 +101,9 @@ public class CustomChunkGenerator extends ChunkGenerator {
         isNoiseInitialized = true;
     }
 
+    // YENİ: Döngü yerine doğrudan Hash'ten okuma
     public TerrainData getTerrainData(String biomeName) {
-        for (TerrainData data : loadedTerrainData) {
-            if (data.name.equals(biomeName)) return data;
-        }
-        return loadedTerrainData.get(0);
+        return terrainDataMap.getOrDefault(biomeName, fallbackData);
     }
 
     @Override
@@ -109,15 +116,21 @@ public class CustomChunkGenerator extends ChunkGenerator {
 
         double[][] rawHeightMap = new double[18][18];
 
+        // ==========================================================
+        // YENİ EFSANEVİ MOTOR: Chunk için RAM dostu yerel biyom haritası!
+        // ==========================================================
+        BiomeBlender.BiomeCache biomeCache = new BiomeBlender.BiomeCache(startX, startZ, biomeProvider);
+
         for (int nx = -1; nx <= 16; nx++) {
             for (int nz = -1; nz <= 16; nz++) {
                 int realX = startX + nx;
                 int realZ = startZ + nz;
 
-                TerrainData tData = getTerrainData(biomeProvider.getCustomBiomeName(realX, realZ));
+                // For döngüleri ve ağırlık hesaplamaları yerine saniyesinde Cache'den çekiyoruz
+                TerrainData tData = getTerrainData(biomeCache.getBiome(realX, realZ));
 
-                // 1. Base Terrain
-                double h = biomeBlender.getBlendedHeight(realX, realZ, heightNoise);
+                // 1. Base Terrain (Matematik için Cache matrisini gönderiyoruz)
+                double h = biomeBlender.getBlendedHeight(realX, realZ, heightNoise, biomeCache);
 
                 // 2. Mountain Noise
                 if (useVanillaBlending) {
@@ -151,10 +164,7 @@ public class CustomChunkGenerator extends ChunkGenerator {
                         break;
                 }
 
-                // ==========================================================
-                // 4. BİYOMA ÖZEL NEHİR SİSTEMİ (Artık configten okunuyor!)
-                // Nehir sadece YML'de 'enabled: true' ise oluşur.
-                // ==========================================================
+                // 4. BİYOMA ÖZEL NEHİR SİSTEMİ
                 if (tData.riverEnabled) {
                     double rNoise = riverNoise.noise(realX * 0.001, realZ * 0.001, 0.5, 0.5, true);
                     double riverValley = Math.abs(rNoise);
@@ -196,7 +206,8 @@ public class CustomChunkGenerator extends ChunkGenerator {
                 double finalHeightDouble = rawHeightMap[x + 1][z + 1];
                 int finalHeight = (int) Math.round(finalHeightDouble);
 
-                TerrainData tData = getTerrainData(biomeProvider.getCustomBiomeName(realX, realZ));
+                // YENİ: Blok inşa ederken de yine Cache matrisinden saniyesinde çağırıyoruz!
+                TerrainData tData = getTerrainData(biomeCache.getBiome(realX, realZ));
 
                 Material actualSurface = tData.surfaceBlock.getRandom(random);
                 Material actualSub = tData.subBlock.getRandom(random);
@@ -316,7 +327,6 @@ public class CustomChunkGenerator extends ChunkGenerator {
         public final int waterLevel;
         public final int subDepth;
 
-        // YENİ: Nehir Ayarları
         public final boolean riverEnabled;
         public final double riverWidth;
         public final int riverDepth;
@@ -353,7 +363,6 @@ public class CustomChunkGenerator extends ChunkGenerator {
             this.waterLevel = rawConfig.getInt("terrain.water-level", 62);
             this.subDepth = rawConfig.getInt("blocks.sub-depth", 4);
 
-            // Nehir Ayarları (Eğer YML'de yazmıyorsa nehir varsayılan olarak KAPALI olur)
             this.riverEnabled = rawConfig.getBoolean("river.enabled", false);
             this.riverWidth = rawConfig.getDouble("river.width", 0.08);
             this.riverDepth = rawConfig.getInt("river.depth", 16);

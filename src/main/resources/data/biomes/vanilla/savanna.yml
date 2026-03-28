@@ -2,8 +2,8 @@
 # BIOME: SAVANA (Savanna Plateau)
 # ==========================================================
 name: "Savanna"
-temperature: 0.8
-humidity: 0.2
+temperature: 0.85
+humidity: 0.3
 color-style: "OLIVE"
 
 terrain:

@@ -1,5 +1,7 @@
 package me.maykitron.worldgen3d.system;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
@@ -12,21 +14,24 @@ import org.bukkit.generator.LimitedRegion;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class SchematicFormat implements StructureLoader {
 
-    // EFSANEVİ RAM ÖNBELLEĞİ: Dosyalar bir kere okunduktan sonra burada saklanır. Sunucu ışık hızında çalışır!
-    private static final Map<String, Clipboard> CACHE = new ConcurrentHashMap<>();
+    // EFSANEVİ RAM ÖNBELLEĞİ: 10 dakika dokunulmazsa RAM'den uçur, en fazla 50 şematik tut!
+    private static final Cache<String, Clipboard> CACHE = CacheBuilder.newBuilder()
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .maximumSize(50)
+            .build();
 
     @SuppressWarnings({"deprecation", "removal"})
     @Override
     public void paste(LimitedRegion region, int x, int y, int z, File file) {
 
-        Clipboard clipboard = CACHE.get(file.getName());
+        // RAM'de varsa saniyesinde çek (getIfPresent)
+        Clipboard clipboard = CACHE.getIfPresent(file.getName());
 
-        // Eğer dosya RAM'de yoksa, diske inip oku ve RAM'e kaydet!
+        // Yoksa diske inip oku ve RAM'e kaydet
         if (clipboard == null) {
             ClipboardFormat format = ClipboardFormats.findByAlias("schematic");
             if (format == null) format = ClipboardFormats.findByFile(file);
@@ -34,7 +39,7 @@ public class SchematicFormat implements StructureLoader {
 
             try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
                 clipboard = reader.read();
-                CACHE.put(file.getName(), clipboard); // RAM'e kaydet
+                CACHE.put(file.getName(), clipboard);
             } catch (Exception e) {
                 System.out.println("[WorldGen3D] Schematic okunamadi: " + file.getName());
                 return;
@@ -45,7 +50,6 @@ public class SchematicFormat implements StructureLoader {
 
         BlockVector3 origin = clipboard.getOrigin();
 
-        // Diskten değil, doğrudan RAM'deki clipboard üzerinden okuma yapıyoruz
         for (int bX = clipboard.getMinimumPoint().getBlockX(); bX <= clipboard.getMaximumPoint().getBlockX(); bX++) {
             for (int bY = clipboard.getMinimumPoint().getBlockY(); bY <= clipboard.getMaximumPoint().getBlockY(); bY++) {
                 for (int bZ = clipboard.getMinimumPoint().getBlockZ(); bZ <= clipboard.getMaximumPoint().getBlockZ(); bZ++) {

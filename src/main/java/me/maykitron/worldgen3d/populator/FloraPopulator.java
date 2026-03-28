@@ -4,12 +4,12 @@ import me.maykitron.worldgen3d.WorldGen3D;
 import me.maykitron.worldgen3d.generator.CustomBiomeProvider;
 import me.maykitron.worldgen3d.generator.CustomChunkGenerator;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Random;
 
 public class FloraPopulator extends BlockPopulator {
@@ -32,6 +32,9 @@ public class FloraPopulator extends BlockPopulator {
                 String biomeName = biomeProvider.getCustomBiomeName(realX, realZ);
                 CustomChunkGenerator.TerrainData tData = chunkGenerator.getTerrainData(biomeName);
 
+                // YENİ: Biyomun iklim değerlerini YML'den dinamik olarak çekiyoruz
+                double temperature = tData.rawConfig.getDouble("temperature", 0.5);
+
                 int highestY = 319;
                 while (highestY > worldInfo.getMinHeight() && limitedRegion.getType(realX, highestY, realZ).isAir()) {
                     highestY--;
@@ -39,9 +42,16 @@ public class FloraPopulator extends BlockPopulator {
                 Material highestBlock = limitedRegion.getType(realX, highestY, realZ);
 
                 // ========================================================
-                // SU ALTI BİYOÇEŞİTLİLİĞİ (Kelp, Seagrass, Mercan)
+                // 1. SU ALTI BİYOÇEŞİTLİLİĞİ VE BUZLANMA (İKLİM KONTROLLÜ)
                 // ========================================================
                 if (highestBlock == Material.WATER) {
+
+                    // Soğuk bir bölgedeysek (Buzlu okyanus veya Tundra sınırı) suların yüzeyini dondur!
+                    if (temperature <= 0.15 && highestY == tData.waterLevel) {
+                        limitedRegion.setType(realX, highestY, realZ, Material.ICE);
+                        continue; // Yüzey donduysa alta bitki koyma ihtimalini düşürüyoruz
+                    }
+
                     int floorY = highestY;
                     while (limitedRegion.getType(realX, floorY, realZ) == Material.WATER && floorY > worldInfo.getMinHeight()) {
                         floorY--;
@@ -50,24 +60,19 @@ public class FloraPopulator extends BlockPopulator {
                     Material floorBlock = limitedRegion.getType(realX, floorY, realZ);
                     if (floorBlock == Material.SAND || floorBlock == Material.GRAVEL || floorBlock == Material.DIRT) {
 
-                        // 1. Mercanlar
                         if (tData.oceanFloorEnabled && random.nextInt(100) < tData.oceanFloorChance) {
                             if (!tData.oceanFloorBlocks.isEmpty()) {
                                 limitedRegion.setType(realX, floorY + 1, realZ, matchMaterial(tData.oceanFloorBlocks.get(random.nextInt(tData.oceanFloorBlocks.size()))));
                             }
-                        }
-                        // 2. Dev Su Yosunları (Kelp)
-                        else if (tData.kelpChance > 0 && random.nextInt(100) < tData.kelpChance) {
-                            int kelpTop = highestY - 1 - random.nextInt(3); // Suyun üstüne çıkmaması için güvenlik
+                        } else if (tData.kelpChance > 0 && random.nextInt(100) < tData.kelpChance) {
+                            int kelpTop = highestY - 1 - random.nextInt(3);
                             if (kelpTop > floorY + 1) {
                                 for (int ky = floorY + 1; ky < kelpTop; ky++) {
-                                    limitedRegion.setType(realX, ky, realZ, Material.KELP_PLANT); // Gövde
+                                    limitedRegion.setType(realX, ky, realZ, Material.KELP_PLANT);
                                 }
-                                limitedRegion.setType(realX, kelpTop, realZ, Material.KELP); // Tepe ucu
+                                limitedRegion.setType(realX, kelpTop, realZ, Material.KELP);
                             }
-                        }
-                        // 3. Kısa Deniz Çayırları (Seagrass)
-                        else if (tData.seagrassChance > 0 && random.nextInt(100) < tData.seagrassChance) {
+                        } else if (tData.seagrassChance > 0 && random.nextInt(100) < tData.seagrassChance) {
                             limitedRegion.setType(realX, floorY + 1, realZ, Material.SEAGRASS);
                         }
                     }
@@ -75,10 +80,23 @@ public class FloraPopulator extends BlockPopulator {
                 }
 
                 // ========================================================
-                // SAHİL KENARI (Şeker Kamışları)
+                // 2. İKLİM BAZLI KAR YAĞIŞI (Kar Kaplaması)
+                // ========================================================
+                // Eğer sıcaklık 0.25 ve altındaysa, yaprakların, toprağın veya kumun üzerine kar yağdır!
+                if (temperature <= 0.25 && highestBlock.isSolid() && highestBlock != Material.ICE) {
+                    // Yüksek dağ zirvelerindeyse (Örn: Y > 100) kar kalınlığını rastgele artır
+                    if (highestY > 100 && random.nextBoolean()) {
+                        limitedRegion.setType(realX, highestY + 1, realZ, Material.SNOW_BLOCK);
+                    } else {
+                        limitedRegion.setType(realX, highestY + 1, realZ, Material.SNOW); // İnce kar katmanı
+                    }
+                    continue; // Yer karla kaplandıysa ot veya çiçek çıkmasına gerek yok
+                }
+
+                // ========================================================
+                // 3. SAHİL KENARI (Şeker Kamışları)
                 // ========================================================
                 if (tData.sugarcaneChance > 0 && (highestBlock == Material.SAND || highestBlock == Material.DIRT || highestBlock == Material.GRASS_BLOCK)) {
-                    // Etrafında su var mı diye "radar" gibi bakıyoruz
                     boolean nextToWater = false;
                     if (limitedRegion.getType(realX + 1, highestY - 1, realZ) == Material.WATER ||
                             limitedRegion.getType(realX - 1, highestY - 1, realZ) == Material.WATER ||
@@ -88,16 +106,16 @@ public class FloraPopulator extends BlockPopulator {
                     }
 
                     if (nextToWater && random.nextInt(100) < tData.sugarcaneChance) {
-                        int caneHeight = 1 + random.nextInt(3); // 1 ila 3 blok arası boy
+                        int caneHeight = 1 + random.nextInt(3);
                         for (int i = 0; i < caneHeight; i++) {
                             limitedRegion.setType(realX, highestY + 1 + i, realZ, Material.SUGAR_CANE);
                         }
-                        continue; // Şeker kamışı çıktıysa normal çiçek çıkmasın
+                        continue;
                     }
                 }
 
                 // ========================================================
-                // KARA BİTKİLERİ (Çiçekler ve Otlar)
+                // 4. KARA BİTKİLERİ (Çiçekler ve Otlar)
                 // ========================================================
                 if (tData.surfaceBlock.contains(highestBlock) && highestBlock != Material.SAND && highestBlock != Material.SNOW_BLOCK) {
                     if (tData.grassChance > 0 && random.nextInt(100) < tData.grassChance) {

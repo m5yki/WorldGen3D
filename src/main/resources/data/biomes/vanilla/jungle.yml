@@ -2,8 +2,8 @@
 # BIOME: YAGMUR ORMANI (Jungle)
 # ==========================================================
 name: "Jungle"
-temperature: 0.9
-humidity: 1.0
+temperature: 0.95
+humidity: 0.95
 
 terrain:
   type: "NORMAL"
