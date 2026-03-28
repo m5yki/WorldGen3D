@@ -23,6 +23,10 @@ blocks:
   deep:
     - "minecraft:stone:95"        # En alt katman %95 Taş
     - "minecraft:andesite:5"      # %5 ihtimalle aralara Andezit serpiştirir
+  rocky:
+    - "minecraft:stone:80"
+    - "minecraft:cobblestone:15"
+    - "minecraft:mossy_cobblestone:5"
 
 flora:
   grass-chance: 70 # Her yer uzun otlarla kapli

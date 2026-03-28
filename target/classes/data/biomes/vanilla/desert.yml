@@ -13,12 +13,10 @@ terrain:
 blocks:
   sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)
   surface:
-    - "minecraft:grass_block:85"  # %85 ihtimalle normal çimen
-    - "minecraft:coarse_dirt:10"  # %10 ihtimalle kurumuş toprak (Çeşitlilik katar)
-    - "minecraft:podzol:5"        # %5 ihtimalle podzol
+    - "minecraft:sand:100"  # %85 ihtimalle normal çimen
   sub:
-    - "minecraft:dirt:90"         # Alt katman %90 normal toprak
-    - "minecraft:coarse_dirt:10"
+    - "minecraft:sand:90"         # Alt katman %90 normal toprak
+    - "minecraft:sand_stone:10"
   deep:
     - "minecraft:stone:95"        # En alt katman %95 Taş
     - "minecraft:andesite:5"      # %5 ihtimalle aralara Andezit serpiştirir

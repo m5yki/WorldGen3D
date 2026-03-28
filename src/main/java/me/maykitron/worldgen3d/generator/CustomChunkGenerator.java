@@ -28,7 +28,12 @@ public class CustomChunkGenerator extends ChunkGenerator {
     private final BiomeBlender biomeBlender;
     private SimplexOctaveGenerator heightNoise;
     private SimplexOctaveGenerator caveNoise;
+    private SimplexOctaveGenerator noodleNoise;
     private SimplexOctaveGenerator lavaNoise;
+    private SimplexOctaveGenerator aquiferNoise;
+    private SimplexOctaveGenerator riverNoise;
+    private SimplexOctaveGenerator elevationNoise;
+    private SimplexOctaveGenerator cliffNoise;
     private boolean isNoiseInitialized = false;
 
     public CustomChunkGenerator(WorldGen3D plugin, CustomBiomeProvider biomeProvider) {
@@ -76,6 +81,11 @@ public class CustomChunkGenerator extends ChunkGenerator {
         heightNoise = new SimplexOctaveGenerator(random, 8);
         caveNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 3L), 4);
         lavaNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 4L), 2);
+        riverNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 5L), 4);
+        elevationNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 6L), 4);
+        noodleNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 7L), 4);
+        aquiferNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 8L), 2);
+        cliffNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 9L), 2);
         biomeProvider.ensureInitialized(worldInfo);
         isNoiseInitialized = true;
     }
@@ -91,68 +101,87 @@ public class CustomChunkGenerator extends ChunkGenerator {
     public void generateNoise(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull ChunkData chunkData) {
         initializeNoise(worldInfo);
 
+        int startX = chunkX * 16;
+        int startZ = chunkZ * 16;
+        boolean useVanillaBlending = plugin.getConfig().getBoolean("settings.vanilla-terrain-blending", true);
+
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                int realX = (chunkX * 16) + x;
-                int realZ = (chunkZ * 16) + z;
+                int realX = startX + x;
+                int realZ = startZ + z;
 
-                // Nihai yüksekliği Zımpara Motorundan (BiomeBlender) alıyoruz. Kavisli göller orada hesaplanıyor!
+                // ==========================================================
+                // YENİ MERKEZ: Pürüzsüz yüksekliği doğrudan BiomeBlender'dan alıyoruz!
+                // ==========================================================
                 double finalHeightDouble = biomeBlender.getBlendedHeight(realX, realZ, heightNoise);
-                int finalHeight = (int) Math.round(finalHeightDouble);
 
+                if (useVanillaBlending) {
+                    double eNoise = elevationNoise.noise(realX * 0.0015, realZ * 0.0015, 0.5, 0.5, true);
+                    finalHeightDouble += (eNoise * 10);
+                }
+
+                // Nehir Sistemi
+                double rNoise = riverNoise.noise(realX * 0.001, realZ * 0.001, 0.5, 0.5, true);
+                double riverValley = Math.abs(rNoise);
+
+                if (riverValley < 0.08) {
+                    double carveForce = (0.08 - riverValley) / 0.08;
+                    finalHeightDouble -= (carveForce * carveForce) * 16;
+                }
+
+                int finalHeight = (int) Math.round(finalHeightDouble);
                 TerrainData tData = getTerrainData(biomeProvider.getCustomBiomeName(realX, realZ));
 
-                // Yüzdelik Oranlara Göre Rastgele Mozaik Blok Seçimi
                 Material actualSurface = tData.surfaceBlock.getRandom(random);
                 Material actualSub = tData.subBlock.getRandom(random);
 
-                // Eğer su seviyesinin altındaysa yüzeyi kum veya çakıl yap (Çimen olmasın)
+                // ==========================================================
+                // KAYALIK VE YAMAÇ MATEMATİĞİ (Dikey yüzeyleri taş yap!)
+                // ==========================================================
+                double cVal = (cliffNoise.noise(realX * 0.05, realZ * 0.05, 0.5, 0.5, true) + 1.0) / 2.0;
+
+                if ((tData.heightVariation > 18 || tData.roughness > 0.010) && cVal > 0.40) {
+                    actualSurface = tData.rockyBlock.getRandom(random);
+                }
+
                 if (finalHeight < tData.waterLevel) {
                     actualSurface = random.nextBoolean() ? Material.SAND : Material.GRAVEL;
                     actualSub = actualSurface;
                 }
 
-                // 1. Yüzey Katmanı
+                // Blokları Yerleştirme
                 chunkData.setBlock(x, finalHeight, z, actualSurface);
 
-                // 2. Toprak Katmanı (YML'deki 'sub-depth' kadar iniyor)
                 for (int y = finalHeight - 1; y >= finalHeight - tData.subDepth; y--) {
                     chunkData.setBlock(x, y, z, actualSub);
                 }
 
-                // 3. Derin Taş Katmanı (Andezit/Taş mozaikleri)
                 for (int y = finalHeight - tData.subDepth - 1; y > worldInfo.getMinHeight(); y--) {
                     chunkData.setBlock(x, y, z, tData.deepBlock.getRandom(random));
                 }
 
                 chunkData.setBlock(x, worldInfo.getMinHeight(), z, Material.BEDROCK);
 
-                // Suyu Doldur
                 for (int y = finalHeight + 1; y <= tData.waterLevel; y++) {
                     chunkData.setBlock(x, y, z, Material.WATER);
                 }
 
-                // =========================================================
-                // 3D MAĞARALAR VE MÜKEMMEL YÜZEY KORUMASI
-                // =========================================================
+                // Yeni Nesil Mağara Sistemi
                 if (tData.caveMode.equalsIgnoreCase("CUSTOM")) {
-
-                    // 1. YÜZEY KORUMASI: Mağaralar toprağın hemen altından değil, en az 12 blok derinden başlamalı!
-                    // Yoksa yüzey çöker ve o anlamsız merdivenimsi çukurlar oluşur.
                     int maxCaveY = finalHeight - 12;
-
-                    // 2. KIYI VE SU KORUMASI: Eğer arazi su seviyesinin altındaysa VEYA su seviyesine çok yakınsa (plaj/sahil),
-                    // mağaraları zorla okyanus tabanının veya kumsalın çok daha altına (su seviyesinden en az 12 blok aşağı) it!
                     if (finalHeight < tData.waterLevel + 5) {
                         maxCaveY = Math.min(maxCaveY, tData.waterLevel - 12);
                     }
 
                     for (int y = worldInfo.getMinHeight() + 2; y < maxCaveY; y++) {
-                        double cNoise = (caveNoise.noise(realX * tData.caveFreq, y * tData.caveFreq, realZ * tData.caveFreq, 0.5, 0.5, true) + 1.0) / 2.0;
 
-                        if (cNoise > tData.caveThreshold) {
+                        double cheese = (caveNoise.noise(realX * tData.caveFreq, y * tData.caveFreq, realZ * tData.caveFreq, 0.5, 0.5, true) + 1.0) / 2.0;
+                        double n1 = noodleNoise.noise(realX * 0.015, y * 0.015, realZ * 0.015, 0.5, 0.5, true);
+                        double n2 = caveNoise.noise(realX * 0.015, y * 0.015, realZ * 0.015, 0.5, 0.5, true);
+                        boolean isNoodle = Math.abs(n1) < 0.05 && Math.abs(n2) < 0.05;
 
-                            // Ekstra Güvenlik: Kazara suyu veya katman kayasını (bedrock) silmesini engeller
+                        if (cheese > (tData.caveThreshold - 0.08) || isNoodle) {
+
                             Material currentBlock = chunkData.getBlockData(x, y, z).getMaterial();
                             if (currentBlock == Material.WATER || currentBlock == Material.BEDROCK) continue;
 
@@ -162,11 +191,16 @@ public class CustomChunkGenerator extends ChunkGenerator {
                                 localLavaLevel += (int) (lNoise * 10);
                             }
 
+                            double aqNoise = aquiferNoise.noise(realX * 0.02, realZ * 0.02, 0.5, 0.5, true);
+                            boolean isAquifer = (y > localLavaLevel && y < 30 && aqNoise > 0.45);
+
                             if (y <= localLavaLevel) {
                                 chunkData.setBlock(x, y, z, Material.LAVA);
                                 if (y == localLavaLevel && random.nextInt(100) < 8) {
                                     chunkData.setBlock(x, y - 1, z, Material.MAGMA_BLOCK);
                                 }
+                            } else if (isAquifer) {
+                                chunkData.setBlock(x, y, z, Material.WATER);
                             } else {
                                 chunkData.setBlock(x, y, z, Material.AIR);
                             }
@@ -177,16 +211,12 @@ public class CustomChunkGenerator extends ChunkGenerator {
         }
     }
 
-    // ==========================================================
-    // MÜKEMMEL YÜZDELİK HESAPLAYICISI (Hata vermeyen versiyon)
-    // ==========================================================
     @SuppressWarnings("unchecked")
     public static class RandomBlockSelector {
         private final List<Material> materials = new ArrayList<>();
         private final List<Integer> weights = new ArrayList<>();
         private int totalWeight = 0;
 
-        // Object kabul ederek hem tekli hem de liste verileri hatasız çözer
         public RandomBlockSelector(Object obj, Material defaultMat) {
             List<String> list = new ArrayList<>();
             if (obj instanceof List) {
@@ -224,13 +254,9 @@ public class CustomChunkGenerator extends ChunkGenerator {
             }
             return materials.get(0);
         }
-
         public boolean contains(Material mat) { return materials.contains(mat); }
     }
 
-    // ==========================================================
-    // RAM ÖNBELLEK VERİ MERKEZİ (Işık hızında jenerasyon için)
-    // ==========================================================
     public static class TerrainData {
         public final String name;
         public final int baseHeight;
@@ -242,6 +268,7 @@ public class CustomChunkGenerator extends ChunkGenerator {
         public final RandomBlockSelector surfaceBlock;
         public final RandomBlockSelector subBlock;
         public final RandomBlockSelector deepBlock;
+        public final RandomBlockSelector rockyBlock;
 
         public final String caveMode;
         public final double caveFreq;
@@ -254,9 +281,7 @@ public class CustomChunkGenerator extends ChunkGenerator {
         public final List<String> flowerTypes, treeFiles;
         public final boolean treesEnabled;
 
-        public final int seagrassChance;
-        public final int kelpChance;
-        public final int sugarcaneChance;
+        public final int seagrassChance, kelpChance, sugarcaneChance;
         public final boolean oceanFloorEnabled;
         public final int oceanFloorChance;
         public final List<String> oceanFloorBlocks;
@@ -273,6 +298,7 @@ public class CustomChunkGenerator extends ChunkGenerator {
             this.surfaceBlock = new RandomBlockSelector(rawConfig.get("blocks.surface"), Material.GRASS_BLOCK);
             this.subBlock = new RandomBlockSelector(rawConfig.get("blocks.sub"), Material.DIRT);
             this.deepBlock = new RandomBlockSelector(rawConfig.get("blocks.deep"), Material.STONE);
+            this.rockyBlock = new RandomBlockSelector(rawConfig.get("blocks.rocky"), Material.STONE);
 
             this.caveMode = rawConfig.getString("caves.mode", "VANILLA");
             this.caveFreq = rawConfig.getDouble("caves.noise-frequency", 0.025);

@@ -10,3 +10,4 @@ settings:
   # VANILLA: Sadece eklentinin kendi kusursuz 8 biyomunu kullanir.
   # CUSTOM: Sadece senin 'custom' klasorune koydugun ozel biyomlari kullanir.
   generator-mode: VANILLA
+  vanilla-terrain-blending: true

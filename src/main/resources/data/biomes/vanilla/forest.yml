@@ -9,8 +9,8 @@ color-style: "BRIGHT_GREEN"
 # --- Arazi Matematigi (3D Noise Ayarlari) ---
 terrain:
   base-height: 68       # Arazinin basladigi sivi (Deniz seviyesi 62'dir)
-  height-variation: 25  # Tepeler maksimum kac blok yukselebilir?
-  roughness: 0.015      # 0.010 genis tepeler, 0.025 keskin ve dik kayaliklar yapar
+  height-variation: 12  # 25'ten 12'ye düşürdük. Tepeler artık daha makul seviyelerde yükselecek.
+  roughness: 0.007      # 0.015'ten 0.007'ye çektik! Artık tepeler daracık değil, çok geniş ve pürüzsüz yayvanlıkta olacak.
 
 # --- Katmanlar ve Bloklar ---
 blocks:

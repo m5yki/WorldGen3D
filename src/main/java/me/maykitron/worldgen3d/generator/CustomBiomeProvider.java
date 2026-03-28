@@ -19,6 +19,7 @@ public class CustomBiomeProvider extends BiomeProvider {
     private final List<BiomeData> loadedBiomes = new ArrayList<>();
     private SimplexOctaveGenerator tempNoise;
     private SimplexOctaveGenerator humidNoise;
+    private SimplexOctaveGenerator continentNoise; // YENİ: Devasa Kıta Motoru
     private boolean isInitialized = false;
 
     public CustomBiomeProvider(WorldGen3D plugin) {
@@ -45,10 +46,10 @@ public class CustomBiomeProvider extends BiomeProvider {
         Random r = new Random(worldInfo.getSeed());
         tempNoise = new SimplexOctaveGenerator(r, 4);
         humidNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() + 1), 4);
+        continentNoise = new SimplexOctaveGenerator(new Random(worldInfo.getSeed() * 12L), 4); // Kıta gürültüsü
         isInitialized = true;
     }
 
-    // ÇÖZÜM 1: Artık F3 ekranında ve su renklerinde doğru Vanilla biyomu görünecek!
     @NotNull
     @Override
     public Biome getBiome(@NotNull WorldInfo worldInfo, int x, int y, int z) {
@@ -58,36 +59,54 @@ public class CustomBiomeProvider extends BiomeProvider {
         if (customName.contains("desert")) return Biome.DESERT;
         if (customName.contains("forest")) return Biome.FOREST;
         if (customName.contains("snow") || customName.contains("tundra")) return Biome.SNOWY_PLAINS;
+        if (customName.contains("savanna")) return Biome.SAVANNA;
+        if (customName.contains("taiga")) return Biome.TAIGA;
         return Biome.PLAINS;
     }
 
     @NotNull
     @Override
     public List<Biome> getBiomes(@NotNull WorldInfo worldInfo) {
-        return new ArrayList<>(List.of(Biome.PLAINS, Biome.OCEAN, Biome.JUNGLE, Biome.DESERT, Biome.FOREST, Biome.SNOWY_PLAINS));
+        return new ArrayList<>(List.of(Biome.PLAINS, Biome.OCEAN, Biome.JUNGLE, Biome.DESERT, Biome.FOREST, Biome.SNOWY_PLAINS, Biome.SAVANNA, Biome.TAIGA));
     }
 
     public String getCustomBiomeName(int x, int z) {
         if (tempNoise == null) return "Plains";
 
-        // ÇÖZÜM 2: 0.0015'i 0.005 yaptık. Artık biyomlar 5000 blok değil, ortalama 500-1000 blok olacak. Keşfetmesi daha keyifli!
-        double temperature = tempNoise.noise(x * 0.005, z * 0.005, 0.5, 0.5, true);
-        double humidity = humidNoise.noise(x * 0.005, z * 0.005, 0.5, 0.5, true);
+        // ==========================================================
+        // YENİ: KITA KONTROLÜ (Okyanusları Karalardan Ayırıyoruz)
+        // Frekansı 0.001 yaptık, yani kıtalar devasa boyutlarda olacak!
+        // ==========================================================
+        double continent = continentNoise.noise(x * 0.001, z * 0.001, 0.5, 0.5, true);
+
+        // Eğer değer -0.15'ten küçükse, sıcaklık/neme bakmaksızın burası KESİNLİKLE OKYANUS!
+        if (continent < -0.15) {
+            return "Ocean";
+        }
+
+        // ==========================================================
+        // KARA BİYOMU SEÇİMİ (Okyanus olmayan devasa karalar için)
+        // ==========================================================
+        double temperature = tempNoise.noise(x * 0.002, z * 0.002, 0.5, 0.5, true);
+        double humidity = humidNoise.noise(x * 0.002, z * 0.002, 0.5, 0.5, true);
 
         temperature = (temperature + 1.0) / 2.0;
         humidity = (humidity + 1.0) / 2.0;
 
-        BiomeData closest = loadedBiomes.get(0);
+        BiomeData closest = null;
         double minDistance = Double.MAX_VALUE;
 
         for (BiomeData data : loadedBiomes) {
+            // ÇOK ÖNEMLİ: Karalarda rastgele Okyanus çıkmasını yasaklıyoruz!
+            if (data.name.equalsIgnoreCase("Ocean")) continue;
+
             double dist = Math.pow(temperature - data.temp, 2) + Math.pow(humidity - data.humid, 2);
             if (dist < minDistance) {
                 minDistance = dist;
                 closest = data;
             }
         }
-        return closest.name;
+        return closest != null ? closest.name : "Plains";
     }
 
     public void ensureInitialized(WorldInfo info) {

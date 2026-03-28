@@ -7,9 +7,9 @@ humidity: 0.7
 color-style: "DARK_GREEN"
 
 terrain:
-  base-height: 75       # Diğer biyomlardan daha yüksekte başlar (Soğuk dağ etekleri)
-  height-variation: 30  # Heybetli tepeler
-  roughness: 0.018      # Keskin ve zorlu bir arazi
+  base-height: 70       # Diğer biyomlardan daha yüksekte başlar (Soğuk dağ etekleri)
+  height-variation: 16  # Heybetli tepeler
+  roughness: 0.008      # Keskin ve zorlu bir arazi
 
 blocks:
   sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)
