@@ -7,10 +7,16 @@ humidity: 0.6
 color-style: "AQUA"
 
 terrain:
+  type: "NORMAL"
   base-height: 35       # Okyanus tabani cok derinde baslar
   height-variation: 15  # Deniz altindaki kucuk tepecikler
   roughness: 0.010      # Yumusak deniz tabani
   water-level: 62       # 35 ile 62 arasini suyla dolduracagiz!
+
+river:
+  enabled: true   # true ise bu biyomdan nehir geçer, false ise kupkuru kalır.
+  width: 0.08     # Nehrin genişliği (0.05 dar dere, 0.12 devasa nehir)
+  depth: 16       # Nehrin arazinin içine kaç blok oyulacağı (derinlik)
 
 blocks:
   sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)

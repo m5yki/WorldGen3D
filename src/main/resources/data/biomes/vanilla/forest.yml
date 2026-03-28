@@ -8,9 +8,15 @@ color-style: "BRIGHT_GREEN"
 
 # --- Arazi Matematigi (3D Noise Ayarlari) ---
 terrain:
+  type: "NORMAL"
   base-height: 68       # Arazinin basladigi sivi (Deniz seviyesi 62'dir)
   height-variation: 12  # 25'ten 12'ye düşürdük. Tepeler artık daha makul seviyelerde yükselecek.
   roughness: 0.007      # 0.015'ten 0.007'ye çektik! Artık tepeler daracık değil, çok geniş ve pürüzsüz yayvanlıkta olacak.
+
+river:
+  enabled: true   # true ise bu biyomdan nehir geçer, false ise kupkuru kalır.
+  width: 0.08     # Nehrin genişliği (0.05 dar dere, 0.12 devasa nehir)
+  depth: 16       # Nehrin arazinin içine kaç blok oyulacağı (derinlik)
 
 # --- Katmanlar ve Bloklar ---
 blocks:

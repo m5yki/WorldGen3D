@@ -7,9 +7,15 @@ humidity: 0.2
 color-style: "OLIVE"
 
 terrain:
+  type: "CANYON"
   base-height: 72
   height-variation: 20  # Orta boylu tepeler
   roughness: 0.006      # Çok geniş, yayvan platolar (roughness düşük)
+
+river:
+  enabled: true   # true ise bu biyomdan nehir geçer, false ise kupkuru kalır.
+  width: 0.08     # Nehrin genişliği (0.05 dar dere, 0.12 devasa nehir)
+  depth: 16       # Nehrin arazinin içine kaç blok oyulacağı (derinlik)
 
 blocks:
   sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)

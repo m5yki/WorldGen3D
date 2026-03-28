@@ -6,9 +6,15 @@ temperature: 0.0
 humidity: 0.3
 
 terrain:
+  type: "NORMAL"
   base-height: 67
   height-variation: 15  # Genelde düz, ama ara sıra sivri tepecikler var
   roughness: 0.009
+
+river:
+  enabled: true   # true ise bu biyomdan nehir geçer, false ise kupkuru kalır.
+  width: 0.08     # Nehrin genişliği (0.05 dar dere, 0.12 devasa nehir)
+  depth: 16       # Nehrin arazinin içine kaç blok oyulacağı (derinlik)
 
 blocks:
   sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)

@@ -6,9 +6,15 @@ temperature: 1.0
 humidity: 0.0
 
 terrain:
+  type: "CANYON"
   base-height: 65
   height-variation: 45  # OHA! 45 blokluk devasa kum tepeleri!
   roughness: 0.008      # Tepeler cok genis ve ruzgarla sekillenmis gibi yumusak
+
+river:
+  enabled: false   # true ise bu biyomdan nehir geçer, false ise kupkuru kalır.
+  width: 0.08     # Nehrin genişliği (0.05 dar dere, 0.12 devasa nehir)
+  depth: 16       # Nehrin arazinin içine kaç blok oyulacağı (derinlik)
 
 blocks:
   sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)

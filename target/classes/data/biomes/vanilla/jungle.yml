@@ -6,9 +6,15 @@ temperature: 0.9
 humidity: 1.0
 
 terrain:
+  type: "NORMAL"
   base-height: 70
   height-variation: 40  # Devasa, tırmanması zor uçurumlar!
   roughness: 0.025      # Arazi çok keskin, sivri ve kaotik (Gürültü çok sık)
+
+river:
+  enabled: true   # true ise bu biyomdan nehir geçer, false ise kupkuru kalır.
+  width: 0.08     # Nehrin genişliği (0.05 dar dere, 0.12 devasa nehir)
+  depth: 16       # Nehrin arazinin içine kaç blok oyulacağı (derinlik)
 
 blocks:
   sub-depth: 4  # Çimenin altındaki toprağın kaç blok derine ineceği (Önceden sabitti, artık özgürüz!)
