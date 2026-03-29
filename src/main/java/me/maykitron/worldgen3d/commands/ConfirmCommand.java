@@ -1,16 +1,13 @@
 package me.maykitron.worldgen3d.commands;
 
 import me.maykitron.worldgen3d.WorldGen3D;
-import me.maykitron.worldgen3d.manager.CommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ConfirmCommand implements SubCommand {
@@ -25,7 +22,7 @@ public class ConfirmCommand implements SubCommand {
     public String getName() { return "confirm"; }
 
     @Override
-    public String getDescription() { return "- Kritik isemleri onaylamak icindir."; }
+    public String getDescription() { return "- Dunya silme islemini onaylar."; }
 
     @Override
     public String getSyntax() { return "/wgen confirm <kod>"; }
@@ -36,92 +33,79 @@ public class ConfirmCommand implements SubCommand {
         Player player = (Player) sender;
         String prefix = plugin.getLangManager().getMessage("prefix");
 
-        if (!CommandManager.pendingDeletions.containsKey(player)) {
-            player.sendMessage(prefix + "§cOnay bekleyen bir işleminiz bulunmuyor.");
-            return;
-        }
-
         if (args.length < 2) {
-            player.sendMessage(prefix + "§cLütfen onay kodunu girin. Örn: /wgen confirm 353");
+            player.sendMessage(prefix + "§cKullanim: §e" + getSyntax());
             return;
         }
 
-        CommandManager.PendingDelete request = CommandManager.pendingDeletions.get(player);
-        int inputCode;
-        try {
-            inputCode = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            player.sendMessage(prefix + "§cGeçersiz kod! Sadece rakam girin.");
+        String inputCode = args[1];
+
+        // WorldCommand sınıfındaki hafızadan oyuncunun verisini çekiyoruz
+        WorldCommand.PendingDelete pending = WorldCommand.pendingDeletions.get(player.getUniqueId());
+
+        if (pending == null) {
+            player.sendMessage(prefix + "§cOnay bekleyen bir islem bulunamadi.");
             return;
         }
 
-        if (inputCode != request.code) {
-            player.sendMessage(prefix + "§cYanlış onay kodu! İşlem iptal edildi.");
-            CommandManager.pendingDeletions.remove(player);
+        if (!pending.code.equals(inputCode)) {
+            player.sendMessage(prefix + "§cHatalı onay kodu girdiniz!");
             return;
         }
 
-        String worldName = request.worldName;
-        World targetWorld = Bukkit.getWorld(worldName);
-        CommandManager.pendingDeletions.remove(player);
+        String worldName = pending.worldName;
 
-        if (targetWorld == null) {
-            player.sendMessage(prefix + "§cSilinecek dünya zaten yok veya daha önce silinmiş!");
-            return;
-        }
+        // İşlem onaylandığı için hafızadan temizliyoruz
+        WorldCommand.pendingDeletions.remove(player.getUniqueId());
 
-        player.sendMessage(prefix + "§a" + worldName + " siliniyor...");
-
-        // Oyuncuyu ana dünyaya (Spawn) güvenlice postalıyoruz
-        player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation());
-
-        if (plugin.isMultiverseHooked()) {
-            try {
-                // MUAZZAM ÇÖZÜM: MV5 API'sine sızıp şifresiz (OTP bypass) doğrudan siliyoruz!
-                Plugin mvPlugin = Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
-                if (mvPlugin != null) {
-                    Object worldManager = mvPlugin.getClass().getMethod("getMVWorldManager").invoke(mvPlugin);
-                    Method deleteMethod = worldManager.getClass().getMethod("deleteWorld", String.class);
-
-                    boolean success = (Boolean) deleteMethod.invoke(worldManager, worldName);
-                    if (success) {
-                        player.sendMessage(prefix + "§aDünya Multiverse-Core üzerinden kusursuzca silindi!");
-                    } else {
-                        player.sendMessage(prefix + "§cMV5 dünyayı silemedi! Yedek sisteme geçiliyor...");
-                        forceDeleteBukkit(targetWorld, worldName, prefix, player);
-                    }
-                }
-            } catch (Exception e) {
-                player.sendMessage(prefix + "§eMV5 API bağlantısı reddedildi, Bukkit ile zorla siliniyor...");
-                forceDeleteBukkit(targetWorld, worldName, prefix, player);
+        World world = Bukkit.getWorld(worldName);
+        if (world != null) {
+            // İçerideki oyuncuları güvenli bir yere tahliye et
+            World mainWorld = Bukkit.getWorlds().get(0);
+            for (Player p : world.getPlayers()) {
+                p.teleport(mainWorld.getSpawnLocation());
+                p.sendMessage(prefix + "§cBulundugunuz dunya silindigi icin ana dunyaya isinlandiniz!");
             }
+            // Dünyayı RAM'den çıkart
+            Bukkit.unloadWorld(world, false);
+        }
+
+        // ==========================================================
+        // DÜNYAYI DİSKTEN (FİZİKSEL OLARAK) SİL
+        // ==========================================================
+        File worldFolder = new File(Bukkit.getWorldContainer(), worldName);
+        if (deleteDirectory(worldFolder)) {
+            player.sendMessage(prefix + "§a" + worldName + " dunyasi diskten basariyla silindi!");
         } else {
-            forceDeleteBukkit(targetWorld, worldName, prefix, player);
+            player.sendMessage(prefix + "§cDunya klasoru silinirken bir hata olustu. Dosyalar isletim sistemi tarafindan kilitli olabilir.");
+        }
+
+        // Multiverse-Core yüklüyse, onun sisteminden de kaydını düş
+        if (plugin.isMultiverseHooked()) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mv delete " + worldName);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "mv confirm");
         }
     }
 
-    private void forceDeleteBukkit(World targetWorld, String worldName, String prefix, Player player) {
-        if (targetWorld != null) Bukkit.unloadWorld(targetWorld, false);
-        File worldFolder = new File(Bukkit.getWorldContainer(), worldName);
-        deleteDirectory(worldFolder);
-        player.sendMessage(prefix + "§aDünya standart Bukkit sistemiyle kökünden silindi!");
-    }
-
-    private void deleteDirectory(File directory) {
-        if (directory.exists()) {
-            File[] files = directory.listFiles();
+    // Klasörleri içindeki dosyalarla birlikte silmeye yarayan tehlikeli ama gerekli metod
+    private boolean deleteDirectory(File path) {
+        if (path.exists()) {
+            File[] files = path.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.isDirectory()) deleteDirectory(file);
-                    else file.delete();
+                    if (file.isDirectory()) {
+                        deleteDirectory(file);
+                    } else {
+                        file.delete();
+                    }
                 }
             }
-            directory.delete();
         }
+        return path.delete();
     }
 
     @Override
     public List<String> getSubcommandArguments(CommandSender sender, String[] args) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

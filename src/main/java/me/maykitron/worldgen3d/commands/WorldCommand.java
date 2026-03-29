@@ -1,21 +1,27 @@
 package me.maykitron.worldgen3d.commands;
 
 import me.maykitron.worldgen3d.WorldGen3D;
-import me.maykitron.worldgen3d.manager.CommandManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 public class WorldCommand implements SubCommand {
 
     private final WorldGen3D plugin;
+
+    // ==========================================================
+    // YENİ: Bekleyen İşlemler Havuzu (Hata veren kısımlar burasıydı)
+    // ==========================================================
+    public static final Map<UUID, PendingDelete> pendingDeletions = new HashMap<>();
 
     public WorldCommand(WorldGen3D plugin) {
         this.plugin = plugin;
@@ -25,10 +31,10 @@ public class WorldCommand implements SubCommand {
     public String getName() { return "world"; }
 
     @Override
-    public String getDescription() { return "- Bir test dunyasina isinlanir veya guvenlice siler."; }
+    public String getDescription() { return "- Dunya yonetimi (Olustur, Sil, Isinlan)."; }
 
     @Override
-    public String getSyntax() { return "/wgen world <dunya> <teleport|delete>"; }
+    public String getSyntax() { return "/wgen world <dunya_ismi> <tp|delete>"; }
 
     @Override
     public void perform(CommandSender sender, String[] args) {
@@ -37,39 +43,31 @@ public class WorldCommand implements SubCommand {
         String prefix = plugin.getLangManager().getMessage("prefix");
 
         if (args.length < 3) {
-            player.sendMessage(prefix + "§cKullanım: §e" + getSyntax());
+            player.sendMessage(prefix + "§cKullanim: §e" + getSyntax());
             return;
         }
 
         String targetWorldName = args[1];
-        World targetWorld = Bukkit.getWorld(targetWorldName);
         String action = args[2].toLowerCase();
+        World targetWorld = Bukkit.getWorld(targetWorldName);
 
-        if (targetWorld == null) {
-            player.sendMessage(prefix + "§c" + targetWorldName + " adında bir dünya bulunamadı!");
-            return;
-        }
-
-        if (action.equals("teleport")) {
-            int highestY = targetWorld.getHighestBlockYAt(0, 0);
-            player.teleport(new Location(targetWorld, 0.5, highestY + 2, 0.5));
-            player.sendMessage(prefix + "§a" + targetWorldName + " dünyasına ışınlandın!");
-        }
-        else if (action.equals("delete")) {
-            // İÇERİDE BİRİ VAR MI KONTROLÜ
-            if (!targetWorld.getPlayers().isEmpty()) {
-                player.sendMessage(prefix + "§cBu dünya silinemez! İçeride " + targetWorld.getPlayers().size() + " aktif oyuncu var.");
+        if (action.equals("tp")) {
+            if (targetWorld == null) {
+                player.sendMessage(prefix + "§c" + targetWorldName + " adinda yuklu bir dunya bulunamadi!");
                 return;
             }
+            player.teleport(targetWorld.getSpawnLocation());
+            player.sendMessage(prefix + "§a" + targetWorldName + " dunyasina isinlandin.");
+        }
+        else if (action.equals("delete")) {
+            // 4 Haneli rastgele güvenlik kodu üretiliyor
+            String code = String.format("%04d", new Random().nextInt(10000));
 
-            // GÜVENLİK KODU ÜRETME (123 ile 987 arası)
-            int randomCode = 123 + new Random().nextInt(865);
-            CommandManager.pendingDeletions.put(player, new CommandManager.PendingDelete(targetWorldName, randomCode));
+            // Oyuncunun isteği hafızaya alınıyor
+            pendingDeletions.put(player.getUniqueId(), new PendingDelete(targetWorldName, code));
 
-            player.sendMessage(prefix + "§eDİKKAT! §c" + targetWorldName + " §edünyasını tamamen silmek üzeresin!");
-            player.sendMessage(prefix + "§eOnaylamak için sohbete şunu yaz: §a/wgen confirm " + randomCode);
-        } else {
-            player.sendMessage(prefix + "§cGeçersiz işlem. Sadece 'teleport' veya 'delete' kullanabilirsin.");
+            player.sendMessage(prefix + "§cDIKKAT: §e" + targetWorldName + " §cdunyasini fiziksel olarak silmek uzeresin!");
+            player.sendMessage(prefix + "§7Onaylamak icin su komutu gir: §a/wgen confirm " + code);
         }
     }
 
@@ -78,12 +76,26 @@ public class WorldCommand implements SubCommand {
         if (args.length == 2) {
             List<String> worlds = new ArrayList<>();
             for (World w : Bukkit.getWorlds()) {
-                if (w.getName().startsWith("wg3d_test_")) worlds.add(w.getName());
+                worlds.add(w.getName());
             }
             return worlds;
-        } else if (args.length == 3) {
-            return Arrays.asList("teleport", "delete");
+        }
+        if (args.length == 3) {
+            return Arrays.asList("tp", "delete");
         }
         return new ArrayList<>();
+    }
+
+    // ==========================================================
+    // YENİ: Hafızada tutulacak obje sınıfı
+    // ==========================================================
+    public static class PendingDelete {
+        public final String worldName;
+        public final String code;
+
+        public PendingDelete(String worldName, String code) {
+            this.worldName = worldName;
+            this.code = code;
+        }
     }
 }

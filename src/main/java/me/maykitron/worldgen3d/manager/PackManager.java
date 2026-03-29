@@ -12,8 +12,6 @@ public class PackManager {
     private final WorldGen3D plugin;
     private final File vanillaFolder;
     private final File customFolder;
-
-    // Hafızaya yüklenen biyomların dosyalarını tutacağımız liste
     private final List<File> loadedBiomes = new ArrayList<>();
     private String currentMode;
 
@@ -30,10 +28,13 @@ public class PackManager {
         if (!vanillaFolder.exists()) vanillaFolder.mkdirs();
         if (!customFolder.exists()) customFolder.mkdirs();
 
-        // ==========================================================
-        // FABRİKA AYARLARI: İlk kurulumda dışarı çıkartılacak dosyalar!
-        // YENİ EKLENENLER: beach.yml, warm_ocean.yml, frozen_ocean.yml
-        // ==========================================================
+        // YENİ: Maden ve Ağaç klasörleri de oluşturuluyor
+        File oreFolder = new File(plugin.getDataFolder(), "data/ores");
+        File treeFolder = new File(plugin.getDataFolder(), "data/trees");
+        if (!oreFolder.exists()) oreFolder.mkdirs();
+        if (!treeFolder.exists()) treeFolder.mkdirs();
+
+        // 1. Vanilla Biyomları Çıkart
         String[] defaultBiomes = {
                 "plains.yml", "desert.yml", "forest.yml", "jungle.yml",
                 "savanna.yml", "snowy_tundra.yml", "taiga.yml", "ocean.yml",
@@ -45,34 +46,39 @@ public class PackManager {
             if (!targetFile.exists()) {
                 try {
                     plugin.saveResource("data/biomes/vanilla/" + biome, false);
-                } catch (Exception e) {
-                    plugin.getLogger().warning("Vanilla biyom JAR icinde bulunamadi: " + biome);
-                }
+                } catch (Exception ignored) {}
             }
+        }
+
+        // 2. Varsayılan Maden (Ore) ve Ağaç (Tree) Profillerini Çıkart
+        File defaultOre = new File(oreFolder, "default_ores.yml");
+        if (!defaultOre.exists()) {
+            try { plugin.saveResource("data/ores/default_ores.yml", false); } catch (Exception ignored) {}
+        }
+
+        File defaultTree = new File(treeFolder, "forest_trees.yml");
+        if (!defaultTree.exists()) {
+            try { plugin.saveResource("data/trees/forest_trees.yml", false); } catch (Exception ignored) {}
         }
     }
 
     private void loadBiomesBasedOnMode() {
-        // Config'den modu okuyoruz (VANILLA veya CUSTOM)
         this.currentMode = plugin.getConfig().getString("settings.generator-mode", "VANILLA").toUpperCase();
         File targetFolder = currentMode.equals("CUSTOM") ? customFolder : vanillaFolder;
 
-        // Klasördeki tüm dosyaları bul
         File[] files = targetFolder.listFiles();
 
         if (files == null || files.length == 0) {
-            plugin.getLogger().severe(plugin.getLangManager().getMessage("prefix") + "HATA: " + currentMode + " modunda hic biyom bulunamadi! Dunya olusturulamayacak.");
+            plugin.getLogger().severe(plugin.getLangManager().getMessage("prefix") + "HATA: " + currentMode + " modunda hic biyom bulunamadi!");
             return;
         }
 
-        // Bulunan .yml dosyalarını hafızaya ekle (Dinamik Yükleme)
         for (File file : files) {
             if (file.getName().endsWith(".yml")) {
                 loadedBiomes.add(file);
             }
         }
 
-        // Konsola kaç biyom yüklendiğini afili bir şekilde yazdırıyoruz!
         plugin.getServer().getConsoleSender().sendMessage(
                 plugin.getLangManager().getMessage("prefix") + "§aMotor Modu: §e" + currentMode + " §a| Yuklenen Biyom Sayisi: §e" + loadedBiomes.size()
         );

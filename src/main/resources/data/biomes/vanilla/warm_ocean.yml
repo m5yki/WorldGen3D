@@ -1,35 +1,37 @@
-# ==========================================================
-# BIOME: SICAK OKYANUS (Warm Ocean)
-# ==========================================================
 name: "Warm_Ocean"
-temperature: 0.8  # Sıcak sular
+temperature: 0.8
 humidity: 1.0
-color-style: "AQUA" # Turkuaz su rengi
+color-style: "AQUA"
+
+# YENİ SİSTEM
+ore-profile: "default_ores"
+tree-profile: "none"
 
 terrain:
   type: "NORMAL"
-  base-height: 38       # Mercanların güneş görmesi için biraz daha sığ
+  base-height: 38
   height-variation: 12
   roughness: 0.008
   water-level: 62
 
 river:
   enabled: false
+  width: 0.08
+  depth: 16
 
 blocks:
   sub-depth: 3
   surface:
-    - "minecraft:sand:100"  # Sadece beyaz kum
+    - "minecraft:sand:100"
   sub:
     - "minecraft:sand:90"
     - "minecraft:sandstone:10"
   deep:
     - "minecraft:stone:100"
 
-# Orijinal dosyandaki deniz altı süslemeleri
 ocean-floor:
   enabled: true
-  chance: 25 # Mercan yoğunluğunu artırdım
+  chance: 25
   blocks:
     - "minecraft:brain_coral_block"
     - "minecraft:tube_coral_block"
@@ -43,62 +45,13 @@ flora:
     types: []
   water-flora:
     seagrass-chance: 40
-    kelp-chance: 5 # Sıcak sularda uzun yosunlar çok nadir olur
+    kelp-chance: 5
   coastal-flora:
     sugarcane-chance: 15
-
-schematics:
-  trees:
-    enabled: false
 
 caves:
   mode: "CUSTOM"
   noise-frequency: 0.035
   threshold: 0.65
   dynamic-lava: false
-
-# --- YENİ MADENLER (Dinamik Damar & Mağara Temas Kontrolü) ---
-ores:
-  coal:
-    block: "minecraft:coal_ore"
-    type: "triangle"
-    min-height: 0
-    max-height: 128
-    center-height: 60
-    vein-size-min: 6
-    vein-size-max: 14
-    exposure-chance: 100
-    chance: 30
-
-  iron:
-    block: "minecraft:iron_ore"
-    type: "triangle"
-    min-height: -64
-    max-height: 64
-    center-height: 16
-    vein-size-min: 4
-    vein-size-max: 9
-    exposure-chance: 80
-    chance: 20
-
-  gold:
-    block: "minecraft:gold_ore"
-    type: "triangle"
-    min-height: -64
-    max-height: 32
-    center-height: -16
-    vein-size-min: 3
-    vein-size-max: 7
-    exposure-chance: 50
-    chance: 8
-
-  diamond:
-    block: "minecraft:diamond_ore"
-    type: "triangle"
-    min-height: -64
-    max-height: 16
-    center-height: -58
-    vein-size-min: 1
-    vein-size-max: 4
-    exposure-chance: 20
-    chance: 6
+  base-lava-level: -54

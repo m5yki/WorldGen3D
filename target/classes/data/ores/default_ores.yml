@@ -1,0 +1,44 @@
+ores:
+  coal:
+    block: "minecraft:coal_ore"
+    type: "triangle"
+    min-height: 0
+    max-height: 128
+    center-height: 60
+    vein-size-min: 6
+    vein-size-max: 14
+    exposure-chance: 100
+    chance: 30
+
+  iron:
+    block: "minecraft:iron_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 64
+    center-height: 16
+    vein-size-min: 4
+    vein-size-max: 9
+    exposure-chance: 80
+    chance: 20
+
+  gold:
+    block: "minecraft:gold_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 32
+    center-height: -16
+    vein-size-min: 3
+    vein-size-max: 7
+    exposure-chance: 50
+    chance: 8
+
+  diamond:
+    block: "minecraft:diamond_ore"
+    type: "triangle"
+    min-height: -64
+    max-height: 16
+    center-height: -58
+    vein-size-min: 1
+    vein-size-max: 4
+    exposure-chance: 20 # Elmaslar kolay kolay mağara duvarında parlamaz!
+    chance: 6

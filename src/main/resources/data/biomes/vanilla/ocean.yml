@@ -1,94 +1,60 @@
-# ==========================================================
-# BIOME: STANDART OKYANUS (Normal Ocean)
-# ==========================================================
 name: "Ocean"
-temperature: 0.5  # Ne çok sıcak ne çok soğuk
-humidity: 1.0     # Maksimum nem
-color-style: "WATER"
+temperature: 0.4
+humidity: 0.6
+color-style: "AQUA"
+
+ore-profile: "default_ores"
+tree-profile: "none"
 
 terrain:
   type: "NORMAL"
-  base-height: 35       # Derin okyanus tabanı
-  height-variation: 15  # Deniz altındaki tepecikler
-  roughness: 0.010      # Yumuşak deniz tabanı
-  water-level: 62       # 35 ile 62 arası suyla dolacak
+  base-height: 35
+  height-variation: 15
+  roughness: 0.010
+  water-level: 62
 
 river:
-  enabled: false  # Okyanusun içinde nehir olmaz
+  enabled: true
+  width: 0.08
+  depth: 16
 
 blocks:
   sub-depth: 4
   surface:
-    - "minecraft:gravel:60"
-    - "minecraft:sand:40"
+    - "minecraft:grass_block:85"
+    - "minecraft:coarse_dirt:10"
+    - "minecraft:podzol:5"
   sub:
-    - "minecraft:gravel:50"
-    - "minecraft:sand:50"
+    - "minecraft:dirt:90"
+    - "minecraft:coarse_dirt:10"
   deep:
     - "minecraft:stone:95"
     - "minecraft:andesite:5"
 
-flora:
-  grass-chance: 0
-  flowers:
-    chance: 0
-    types: []
-  water-flora:
-    seagrass-chance: 50    # Bolca deniz çayırı
-    kelp-chance: 30        # Yüzeye uzanan dev yosunlar
+ocean-floor:
+  enabled: true
+  chance: 15
+  blocks:
+    - "minecraft:brain_coral_block"
+    - "minecraft:tube_coral_block"
+    - "minecraft:bubble_coral_block"
+    - "minecraft:fire_coral_block"
 
-schematics:
-  trees:
-    enabled: false
+flora:
+  grass-chance: 10
+  flowers:
+    chance: 5
+    types:
+      - "minecraft:dandelion"
+  water-flora:
+    seagrass-chance: 40
+    kelp-chance: 20
+  coastal-flora:
+    sugarcane-chance: 15
 
 caves:
   mode: "CUSTOM"
   noise-frequency: 0.035
   threshold: 0.65
-  dynamic-lava: false # Suyun hemen altında lav havuzu çıkmasını engelledik
-
-# --- YENİ MADENLER (Dinamik Damar & Mağara Temas Kontrolü) ---
-ores:
-  coal:
-    block: "minecraft:coal_ore"
-    type: "triangle"
-    min-height: 0
-    max-height: 128
-    center-height: 60
-    vein-size-min: 6
-    vein-size-max: 14
-    exposure-chance: 100
-    chance: 30
-
-  iron:
-    block: "minecraft:iron_ore"
-    type: "triangle"
-    min-height: -64
-    max-height: 64
-    center-height: 16
-    vein-size-min: 4
-    vein-size-max: 9
-    exposure-chance: 80
-    chance: 20
-
-  gold:
-    block: "minecraft:gold_ore"
-    type: "triangle"
-    min-height: -64
-    max-height: 32
-    center-height: -16
-    vein-size-min: 3
-    vein-size-max: 7
-    exposure-chance: 50
-    chance: 8
-
-  diamond:
-    block: "minecraft:diamond_ore"
-    type: "triangle"
-    min-height: -64
-    max-height: 16
-    center-height: -58
-    vein-size-min: 1
-    vein-size-max: 4
-    exposure-chance: 20
-    chance: 6
+  dynamic-lava: true
+  base-lava-level: -54

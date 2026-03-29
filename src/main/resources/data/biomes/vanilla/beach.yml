@@ -3,14 +3,20 @@ temperature: 0.6
 humidity: 0.6
 color-style: "NORMAL"
 
+# YENİ SİSTEM: Modüler Bağlantılar
+ore-profile: "default_ores"
+tree-profile: "none" # Sahillerde genelde ağaç olmaz, ama ileride palmiye eklemek istersen "beach_trees" yapabilirsin!
+
 terrain:
   type: "SMOOTH"
-  base-height: 63       # Su seviyesinden (62) sadece 1 blok yukarısı
-  height-variation: 3   # Dümdüz, hafif eğimli bir kumsal
+  base-height: 63
+  height-variation: 3
   roughness: 0.003
 
 river:
   enabled: false
+  width: 0.08
+  depth: 16
 
 blocks:
   sub-depth: 3
@@ -28,11 +34,11 @@ flora:
     chance: 0
     types: []
   coastal-flora:
-    sugarcane-chance: 25 # Kıyılarda bolca şeker kamışı
-
-schematics:
-  trees:
-    enabled: false
+    sugarcane-chance: 25
 
 caves:
-  mode: "NONE" # Sahilin altında dev mağaralar açılmaz ki kumlar çökmesin
+  mode: "NONE"
+  noise-frequency: 0.035
+  threshold: 0.65
+  dynamic-lava: false
+  base-lava-level: -54

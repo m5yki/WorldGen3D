@@ -1,0 +1,8 @@
+enabled: true
+chance: 15
+y-offset: -1
+files:
+  - "vanilla/forest_tree1.schematic"
+  - "vanilla/forest_tree2.schematic"
+  - "vanilla/forest_tree3.schematic"
+  - "vanilla/forest_tree4.schematic"

@@ -1,7 +1,11 @@
 name: "Frozen_Ocean"
-temperature: 0.1  # Çok Soğuk!
-humidity: 1.0     # Okyanus olduğu için nem en yüksekte
+temperature: 0.1
+humidity: 1.0
 color-style: "SNOWY"
+
+# YENİ SİSTEM
+ore-profile: "default_ores"
+tree-profile: "none"
 
 terrain:
   type: "NORMAL"
@@ -12,6 +16,8 @@ terrain:
 
 river:
   enabled: false
+  width: 0.08
+  depth: 16
 
 blocks:
   sub-depth: 4
@@ -30,16 +36,17 @@ ocean-floor:
   chance: 30
   blocks:
     - "minecraft:blue_ice"
-    - "minecraft:packed_ice" # Deniz tabanından yükselen buz dağlarının kökleri
+    - "minecraft:packed_ice"
 
 flora:
   grass-chance: 0
   water-flora:
-    seagrass-chance: 10 # Soğuk sularda bitki örtüsü zayıftır
+    seagrass-chance: 10
     kelp-chance: 5
 
 caves:
   mode: "CUSTOM"
   noise-frequency: 0.035
   threshold: 0.65
-  dynamic-lava: false # Buzlu okyanusun hemen altında lav çıkmasını engelledik
+  dynamic-lava: false
+  base-lava-level: -54

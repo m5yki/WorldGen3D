@@ -5,20 +5,30 @@ import me.maykitron.worldgen3d.generator.CustomChunkGenerator;
 import me.maykitron.worldgen3d.generator.SingleBiomeProvider;
 import me.maykitron.worldgen3d.manager.CommandManager;
 import me.maykitron.worldgen3d.manager.LangManager;
+import me.maykitron.worldgen3d.manager.OreManager;
 import me.maykitron.worldgen3d.manager.PackManager;
 import me.maykitron.worldgen3d.manager.StructureManager;
+import me.maykitron.worldgen3d.manager.TreeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
+import me.maykitron.worldgen3d.manager.BlockPlacer;
+import me.maykitron.worldgen3d.listener.SaplingGrowListener;
 
 public class WorldGen3D extends JavaPlugin {
 
     // Eklenti Sistem Değişkenleri
     private boolean hasItemsAdder = false;
-    private boolean hasMultiverse = false; // YENİ: MV5 Kontrolcüsü
+    private boolean hasMultiverse = false;
     private LangManager langManager;
     private StructureManager structureManager;
+    private BlockPlacer blockPlacer;
+
+    // YENİ MODÜLER SİSTEM YÖNETİCİLERİ
+    private OreManager oreManager;
+    private TreeManager treeManager;
+
     private PackManager packManager;
     private ConsoleCommandSender console;
 
@@ -30,7 +40,16 @@ public class WorldGen3D extends JavaPlugin {
 
         this.langManager = new LangManager(this);
         this.structureManager = new StructureManager(this);
+
+        // ==========================================================
+        // YENİ: Yöneticiler PackManager'dan önce başlatılmalı!
+        // Çünkü PackManager biyomları okurken bu profilleri arayacak.
+        // ==========================================================
+        this.oreManager = new OreManager(this);
+        this.treeManager = new TreeManager(this);
         this.packManager = new PackManager(this);
+        this.blockPlacer = new BlockPlacer(this);
+        getServer().getPluginManager().registerEvents(new SaplingGrowListener(this), this);
 
         printAsciiArt();
 
@@ -58,14 +77,12 @@ public class WorldGen3D extends JavaPlugin {
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
-        // EĞER MV5 veya Bukkit'ten "test_" ID'si gelirse İZOLE LABORATUVAR devreye girer!
         if (id != null && id.startsWith("test_")) {
             String targetBiome = id.replace("test_", "").replace("_", " ");
             SingleBiomeProvider singleBiome = new SingleBiomeProvider(this, targetBiome);
             return new CustomChunkGenerator(this, singleBiome);
         }
 
-        // Normal bir dünya ise varsayılan motor çalışır
         CustomBiomeProvider biomeProvider = new CustomBiomeProvider(this);
         return new CustomChunkGenerator(this, biomeProvider);
     }
@@ -85,7 +102,6 @@ public class WorldGen3D extends JavaPlugin {
             sendConsoleMsg("error-missing-itemsadder");
         }
 
-        // YENİ: MV5 Kontrolü
         if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
             hasMultiverse = true;
             console.sendMessage("§a[WorldGen3D] Multiverse-Core bulundu! Dunyalar senkronize edilecek.");
@@ -120,15 +136,24 @@ public class WorldGen3D extends JavaPlugin {
         }
     }
 
+    // ==========================================================
+    // GETTER METODLARI (Diğer sınıfların buraya ulaşması için)
+    // ==========================================================
     public LangManager getLangManager() { return langManager; }
     public StructureManager getStructureManager() { return structureManager; }
     public PackManager getPackManager() { return packManager; }
 
+    public OreManager getOreManager() { return oreManager; }
+    public TreeManager getTreeManager() { return treeManager; }
+    public BlockPlacer getBlockPlacer() { return blockPlacer; }
     public boolean isItemsAdderHooked() { return hasItemsAdder; }
     public boolean isMultiverseHooked() { return hasMultiverse; }
 
     public void reloadEngine() {
         this.langManager = new LangManager(this);
+        // /wgen reload atıldığında ağaçları ve madenleri de baştan okur!
+        this.oreManager = new OreManager(this);
+        this.treeManager = new TreeManager(this);
         this.packManager = new PackManager(this);
         getLogger().info("[WorldGen3D] Motor ayarlari basariyla yenilendi!");
     }
