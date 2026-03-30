@@ -1,47 +1,67 @@
+# ==========================================================
+# BIOME: ORMAN / JUNGLE (Jungle)
+# Sıcaklık/Nem Matrisi: temp=0.90, humid=0.92
+# Konumu: Çok sıcak ve çok nemli. Matrisin sağ-üst köşesi.
+# Savanna (0.78/0.28) ile bu biyom arasında humidity uçurumu
+# var — ikisi doğrudan bitişmez, araya Forest/Swamp girer.
+# ==========================================================
 name: "Jungle"
-temperature: 0.9
-humidity: 1.0
-color-style: "BRIGHT_GREEN"
+temperature: 0.90
+humidity: 0.92
 
 ore-profile: "default_ores"
 tree-profile: "jungle_trees"
 
 terrain:
   type: "NORMAL"
-  base-height: 70
-  height-variation: 40
-  roughness: 0.025
+  base-height: 71
+  height-variation: 38
+  roughness: 0.022
+  water-level: 62
 
 river:
   enabled: true
-  width: 0.08
-  depth: 16
+  width: 0.065
+  depth: 15
 
 blocks:
   sub-depth: 4
   surface:
-    - "minecraft:grass_block:85"
-    - "minecraft:coarse_dirt:10"
-    - "minecraft:podzol:5"
+    - "minecraft:grass_block:75"
+    - "minecraft:podzol:18"
+    - "minecraft:coarse_dirt:7"
+  rocky:
+    - "minecraft:stone:65"
+    - "minecraft:mossy_cobblestone:35"
   sub:
-    - "minecraft:dirt:90"
-    - "minecraft:coarse_dirt:10"
+    - "minecraft:dirt:82"
+    - "minecraft:coarse_dirt:18"
   deep:
-    - "minecraft:stone:95"
-    - "minecraft:andesite:5"
+    - "minecraft:stone:88"
+    - "minecraft:andesite:12"
 
 flora:
-  grass-chance: 90
+  grass-chance: 88
   flowers:
-    chance: 20
+    chance: 18
     types:
-      - "minecraft:fern"
-      - "minecraft:large_fern"
-      - "minecraft:melon"
+      - "minecraft:fern:40"
+      - "minecraft:large_fern:35"
+      - "minecraft:melon:25"
 
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.035
-  threshold: 0.65
+  mode: "BOTH"
+  noise-frequency: 0.045
+  threshold: 0.56
+  spaghetti-threshold: 0.026
   dynamic-lava: true
   base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false

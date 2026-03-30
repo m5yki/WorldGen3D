@@ -1,0 +1,65 @@
+# ==========================================================
+# BIOME: DAĞ (Mountain)
+# Continent noise + elevation noise ile belirlenir — matrise girmez.
+# Yüksek kıta (>0.32) + orta-yüksek rakım (elevation >0.42)
+# ==========================================================
+name: "Mountain"
+temperature: 0.20
+humidity: 0.32
+
+ore-profile: "default_ores"
+tree-profile: "none"
+
+terrain:
+  type: "JAGGED"
+  base-height: 92
+  height-variation: 85
+  roughness: 0.013
+  water-level: 62
+
+river:
+  enabled: false
+
+blocks:
+  sub-depth: 3
+  surface:
+    - "minecraft:stone:55"
+    - "minecraft:gravel:25"
+    - "minecraft:snow_block:20"
+  rocky:
+    - "minecraft:stone:78"
+    - "minecraft:cobblestone:22"
+  sub:
+    - "minecraft:stone:80"
+    - "minecraft:gravel:20"
+  deep:
+    - "minecraft:stone:88"
+    - "minecraft:deepslate:12"
+
+flora:
+  grass-chance: 0
+  flowers:
+    chance: 0
+    types: []
+
+caves:
+  mode: "BOTH"
+  noise-frequency: 0.042
+  threshold: 0.59
+  spaghetti-threshold: 0.027
+  dynamic-lava: true
+  base-lava-level: -54
+
+floating-islands:
+  enabled: true
+  min-y: 160
+  max-y: 220
+
+canyon:
+  enabled: false
+
+trench:
+  enabled: false
+
+glacier:
+  enabled: false

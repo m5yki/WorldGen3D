@@ -1,50 +1,64 @@
+# ==========================================================
+# BIOME: OVALIK (Plains)
+# Sıcaklık/Nem Matrisi: temp=0.45, humid=0.30
+# Konumu: Ilık-kuru merkez. Forest ile Desert arasında tampon.
+# ==========================================================
 name: "Plains"
-temperature: 0.5
-humidity: 0.35
-color-style: "NORMAL"
+temperature: 0.45
+humidity: 0.30
 
 ore-profile: "default_ores"
-tree-profile: "none" # Ovalarda ağaç olmaz, düzlüktür.
+tree-profile: "none"
 
 terrain:
   type: "NORMAL"
-  base-height: 64
-  height-variation: 10
-  roughness: 0.005
+  base-height: 66
+  height-variation: 18
+  roughness: 0.006
+  water-level: 62
 
 river:
   enabled: true
-  width: 0.08
-  depth: 16
+  width: 0.06
+  depth: 12
 
 blocks:
   sub-depth: 4
   surface:
-    - "minecraft:grass_block:85"
-    - "minecraft:coarse_dirt:10"
-    - "minecraft:podzol:5"
+    - "minecraft:grass_block:88"
+    - "minecraft:coarse_dirt:12"
+  rocky:
+    - "minecraft:stone:80"
+    - "minecraft:cobblestone:20"
   sub:
     - "minecraft:dirt:90"
     - "minecraft:coarse_dirt:10"
   deep:
-    - "minecraft:stone:95"
-    - "minecraft:andesite:5"
-  rocky:
-    - "minecraft:stone:80"
-    - "minecraft:cobblestone:15"
-    - "minecraft:mossy_cobblestone:5"
+    - "minecraft:stone:90"
+    - "minecraft:andesite:10"
 
 flora:
-  grass-chance: 70
+  grass-chance: 65
   flowers:
-    chance: 15
+    chance: 12
     types:
-      - "minecraft:cornflower"
-      - "minecraft:azure_bluet"
+      - "minecraft:dandelion:50"
+      - "minecraft:cornflower:30"
+      - "minecraft:azure_bluet:20"
 
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.040
-  threshold: 0.60
+  mode: "BOTH"
+  noise-frequency: 0.045
+  threshold: 0.58
+  spaghetti-threshold: 0.025
   dynamic-lava: true
   base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false

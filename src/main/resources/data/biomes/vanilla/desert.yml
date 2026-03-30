@@ -1,43 +1,67 @@
+# ==========================================================
+# BIOME: ÇÖL (Desert)
+# Sıcaklık/Nem Matrisi: temp=0.95, humid=0.05
+# Konumu: Matrisin sağ-alt köşesi. En sıcak ve kuru biyom.
+# Kıyı tamponu sayesinde hiçbir zaman okyanusla doğrudan
+# bitişmez — araya her zaman Savanna veya Beach girer.
+# ==========================================================
 name: "Desert"
-temperature: 1.0
-humidity: 0.0
-color-style: "BROWNISH"
+temperature: 0.95
+humidity: 0.05
 
 ore-profile: "default_ores"
-tree-profile: "none" # Çölde ağaç çıkmaz!
+tree-profile: "none"
 
 terrain:
-  type: "CANYON"
-  base-height: 65
-  height-variation: 45
-  roughness: 0.008
+  type: "NORMAL"
+  base-height: 68
+  height-variation: 32
+  roughness: 0.010
+  water-level: 62
 
 river:
   enabled: false
-  width: 0.08
-  depth: 16
 
 blocks:
-  sub-depth: 4
+  sub-depth: 5
   surface:
     - "minecraft:sand:100"
+  rocky:
+    - "minecraft:sandstone:70"
+    - "minecraft:smooth_sandstone:30"
   sub:
-    - "minecraft:sand:90"
-    - "minecraft:sandstone:10"
+    - "minecraft:sand:75"
+    - "minecraft:sandstone:25"
   deep:
-    - "minecraft:stone:95"
-    - "minecraft:andesite:5"
+    - "minecraft:stone:80"
+    - "minecraft:sandstone:20"
 
 flora:
   grass-chance: 0
   flowers:
-    chance: 2
+    chance: 3
     types:
-      - "minecraft:dead_bush"
+      - "minecraft:dead_bush:100"
 
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.035
-  threshold: 0.65
+  mode: "BOTH"
+  noise-frequency: 0.042
+  threshold: 0.59
+  spaghetti-threshold: 0.022
   dynamic-lava: true
   base-lava-level: -54
+
+canyon:
+  enabled: true
+  noise-frequency: 0.0018
+  width: 0.050
+  depth: 55
+
+glacier:
+  enabled: false
+  
+trench:
+  enabled: false
+
+floating-islands:
+  enabled: false

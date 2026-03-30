@@ -1,60 +1,62 @@
+# ==========================================================
+# BIOME: OKYANUS (Ocean)
+# Continent noise tarafından atanır, matrise girmez.
+# ==========================================================
 name: "Ocean"
-temperature: 0.4
-humidity: 0.6
-color-style: "AQUA"
+temperature: 0.42
+humidity: 0.60
 
 ore-profile: "default_ores"
 tree-profile: "none"
 
 terrain:
   type: "NORMAL"
-  base-height: 35
-  height-variation: 15
-  roughness: 0.010
+  base-height: 30
+  height-variation: 18
+  roughness: 0.012
   water-level: 62
 
 river:
-  enabled: true
-  width: 0.08
-  depth: 16
+  enabled: false
 
 blocks:
   sub-depth: 4
   surface:
-    - "minecraft:grass_block:85"
-    - "minecraft:coarse_dirt:10"
-    - "minecraft:podzol:5"
+    - "minecraft:gravel:55"
+    - "minecraft:sand:30"
+    - "minecraft:clay:15"
+  rocky:
+    - "minecraft:stone:100"
   sub:
-    - "minecraft:dirt:90"
-    - "minecraft:coarse_dirt:10"
+    - "minecraft:gravel:70"
+    - "minecraft:sand:30"
   deep:
     - "minecraft:stone:95"
     - "minecraft:andesite:5"
 
-ocean-floor:
-  enabled: true
-  chance: 15
-  blocks:
-    - "minecraft:brain_coral_block"
-    - "minecraft:tube_coral_block"
-    - "minecraft:bubble_coral_block"
-    - "minecraft:fire_coral_block"
-
 flora:
-  grass-chance: 10
+  grass-chance: 0
   flowers:
-    chance: 5
-    types:
-      - "minecraft:dandelion"
-  water-flora:
-    seagrass-chance: 40
-    kelp-chance: 20
-  coastal-flora:
-    sugarcane-chance: 15
+    chance: 0
+    types: []
 
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.035
-  threshold: 0.65
+  mode: "BOTH"
+  noise-frequency: 0.040
+  threshold: 0.60
+  spaghetti-threshold: 0.022
   dynamic-lava: true
   base-lava-level: -54
+
+trench:
+  enabled: true
+  extra-depth: 40
+
+glacier:
+  enabled: false
+
+floating-islands:
+  enabled: false
+
+canyon:
+  enabled: false

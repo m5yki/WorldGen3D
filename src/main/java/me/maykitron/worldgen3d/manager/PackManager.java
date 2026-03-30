@@ -38,7 +38,8 @@ public class PackManager {
         String[] defaultBiomes = {
                 "plains.yml", "desert.yml", "forest.yml", "jungle.yml",
                 "savanna.yml", "snowy_tundra.yml", "taiga.yml", "ocean.yml",
-                "beach.yml", "warm_ocean.yml", "frozen_ocean.yml"
+                "beach.yml", "warm_ocean.yml", "frozen_ocean.yml, glacier.yml",
+                "mountain.yml", "snowy_beach.yml", "swamp.yml, volcano.yml"
         };
 
         for (String biome : defaultBiomes) {

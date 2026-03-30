@@ -1,0 +1,65 @@
+# ==========================================================
+# BIOME: BATAKLIK (Swamp)
+# Sıcaklık/Nem Matrisi: temp=0.58, humid=0.88
+# Konumu: Ilık-çok nemli. Düşük kıta kenarlarında çıkar.
+# Forest (0.55/0.65) ile Jungle (0.90/0.92) arasında nemli geçiş.
+# ==========================================================
+name: "Swamp"
+temperature: 0.58
+humidity: 0.88
+
+ore-profile: "default_ores"
+tree-profile: "none"
+
+terrain:
+  type: "NORMAL"
+  base-height: 62
+  height-variation: 10
+  roughness: 0.007
+  water-level: 62
+
+river:
+  enabled: true
+  width: 0.085
+  depth: 8
+
+blocks:
+  sub-depth: 4
+  surface:
+    - "minecraft:grass_block:45"
+    - "minecraft:mud:38"
+    - "minecraft:clay:17"
+  rocky:
+    - "minecraft:stone:60"
+    - "minecraft:mud:40"
+  sub:
+    - "minecraft:dirt:55"
+    - "minecraft:mud:45"
+  deep:
+    - "minecraft:stone:88"
+    - "minecraft:andesite:12"
+
+flora:
+  grass-chance: 55
+  flowers:
+    chance: 14
+    types:
+      - "minecraft:blue_orchid:70"
+      - "minecraft:lily_pad:30"
+
+caves:
+  mode: "BOTH"
+  noise-frequency: 0.042
+  threshold: 0.58
+  spaghetti-threshold: 0.024
+  dynamic-lava: true
+  base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false

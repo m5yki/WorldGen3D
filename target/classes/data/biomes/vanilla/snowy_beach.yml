@@ -1,11 +1,10 @@
 # ==========================================================
-# BIOME: SAHİL (Beach)
-# Continent noise [-0.08, 0.0) bandında çıkar.
-# Dar bant → kıyılar gerçekçi ve ince.
+# BIOME: KARLI SAHİL (Snowy_Beach)
+# Soğuk kıyılarda (temp < 0.22) çıkar.
 # ==========================================================
-name: "Beach"
-temperature: 0.60
-humidity: 0.55
+name: "Snowy_Beach"
+temperature: 0.06
+humidity: 0.22
 
 ore-profile: "default_ores"
 tree-profile: "none"
@@ -23,12 +22,14 @@ river:
 blocks:
   sub-depth: 3
   surface:
-    - "minecraft:sand:100"
+    - "minecraft:snow_block:60"
+    - "minecraft:sand:40"
   rocky:
-    - "minecraft:sandstone:100"
+    - "minecraft:stone:70"
+    - "minecraft:packed_ice:30"
   sub:
-    - "minecraft:sand:80"
-    - "minecraft:sandstone:20"
+    - "minecraft:sand:65"
+    - "minecraft:gravel:35"
   deep:
     - "minecraft:stone:100"
 

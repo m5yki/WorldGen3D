@@ -6,7 +6,9 @@ me\maykitron\worldgen3d\manager\LangManager.class
 me\maykitron\worldgen3d\generator\CustomBiomeProvider$BiomeData.class
 me\maykitron\worldgen3d\manager\BiomeColorManager.class
 me\maykitron\worldgen3d\generator\CustomChunkGenerator$RandomBlockSelector.class
+me\maykitron\worldgen3d\shaper\VolcanoShaper.class
 me\maykitron\worldgen3d\generator\CustomChunkGenerator$TerrainData.class
+me\maykitron\worldgen3d\shaper\CanyonShaper.class
 me\maykitron\worldgen3d\manager\TreeManager$TreeProfile.class
 me\maykitron\worldgen3d\shaper\BeachShaper.class
 me\maykitron\worldgen3d\generator\BiomeBlender$BlendOffset.class
@@ -20,6 +22,7 @@ me\maykitron\worldgen3d\generator\VoidGenerator.class
 me\maykitron\worldgen3d\commands\SaveCommand.class
 me\maykitron\worldgen3d\shaper\CaveShaper.class
 me\maykitron\worldgen3d\layer\SurfaceLayer.class
+me\maykitron\worldgen3d\shaper\GlacierShaper.class
 me\maykitron\worldgen3d\shaper\RiverShaper.class
 me\maykitron\worldgen3d\manager\OreManager$OreSetting.class
 me\maykitron\worldgen3d\populator\FloraPopulator.class
@@ -31,8 +34,10 @@ me\maykitron\worldgen3d\generator\SingleBiomeProvider.class
 me\maykitron\worldgen3d\commands\CreatorCommand.class
 me\maykitron\worldgen3d\shaper\MountainShaper.class
 me\maykitron\worldgen3d\manager\TreeManager.class
+me\maykitron\worldgen3d\shaper\OceanTrenchShaper.class
 me\maykitron\worldgen3d\generator\CustomBiomeProvider.class
 me\maykitron\worldgen3d\commands\SchematicCommand.class
+me\maykitron\worldgen3d\shaper\FloatingIslandShaper.class
 me\maykitron\worldgen3d\commands\InfoCommand.class
 me\maykitron\worldgen3d\layer\BlockLayer.class
 me\maykitron\worldgen3d\commands\WorldCommand.class

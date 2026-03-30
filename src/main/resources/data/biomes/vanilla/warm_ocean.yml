@@ -1,57 +1,54 @@
+# ==========================================================
+# BIOME: SICAK OKYANUS (Warm_Ocean)
+# ==========================================================
 name: "Warm_Ocean"
-temperature: 0.8
+temperature: 0.82
 humidity: 1.0
-color-style: "AQUA"
 
-# YENİ SİSTEM
 ore-profile: "default_ores"
 tree-profile: "none"
 
 terrain:
   type: "NORMAL"
-  base-height: 38
-  height-variation: 12
-  roughness: 0.008
+  base-height: 34
+  height-variation: 14
+  roughness: 0.009
   water-level: 62
 
 river:
   enabled: false
-  width: 0.08
-  depth: 16
 
 blocks:
   sub-depth: 3
   surface:
     - "minecraft:sand:100"
+  rocky:
+    - "minecraft:stone:100"
   sub:
-    - "minecraft:sand:90"
-    - "minecraft:sandstone:10"
+    - "minecraft:sand:85"
+    - "minecraft:sandstone:15"
   deep:
     - "minecraft:stone:100"
-
-ocean-floor:
-  enabled: true
-  chance: 25
-  blocks:
-    - "minecraft:brain_coral_block"
-    - "minecraft:tube_coral_block"
-    - "minecraft:bubble_coral_block"
-    - "minecraft:fire_coral_block"
 
 flora:
   grass-chance: 0
   flowers:
     chance: 0
     types: []
-  water-flora:
-    seagrass-chance: 40
-    kelp-chance: 5
-  coastal-flora:
-    sugarcane-chance: 15
 
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.035
-  threshold: 0.65
+  mode: "BOTH"
+  noise-frequency: 0.040
+  threshold: 0.60
+  spaghetti-threshold: 0.020
   dynamic-lava: false
   base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false

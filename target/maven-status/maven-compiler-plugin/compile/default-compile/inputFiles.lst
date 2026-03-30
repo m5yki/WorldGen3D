@@ -30,10 +30,15 @@ C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\pop
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\populator\OrePopulator.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\populator\SchematicPopulator.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\BeachShaper.java
+C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\CanyonShaper.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\CaveShaper.java
+C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\FloatingIslandShaper.java
+C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\GlacierShaper.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\MountainShaper.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\OceanShaper.java
+C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\OceanTrenchShaper.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\RiverShaper.java
+C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\shaper\VolcanoShaper.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\system\NbtFormat.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\system\SchematicFormat.java
 C:\Users\mclan\IdeaProjects\WorldGen3D\src\main\java\me\maykitron\worldgen3d\system\SchemFormat.java

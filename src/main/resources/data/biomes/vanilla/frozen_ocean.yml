@@ -1,52 +1,57 @@
+# ==========================================================
+# BIOME: DONMUŞ OKYANUS (Frozen_Ocean)
+# ==========================================================
 name: "Frozen_Ocean"
-temperature: 0.1
+temperature: 0.08
 humidity: 1.0
-color-style: "SNOWY"
 
-# YENİ SİSTEM
 ore-profile: "default_ores"
 tree-profile: "none"
 
 terrain:
   type: "NORMAL"
-  base-height: 35
-  height-variation: 15
+  base-height: 32
+  height-variation: 16
   roughness: 0.010
   water-level: 62
 
 river:
   enabled: false
-  width: 0.08
-  depth: 16
 
 blocks:
   sub-depth: 4
   surface:
-    - "minecraft:gravel:70"
-    - "minecraft:dirt:30"
+    - "minecraft:gravel:60"
+    - "minecraft:dirt:25"
+    - "minecraft:packed_ice:15"
+  rocky:
+    - "minecraft:stone:100"
   sub:
-    - "minecraft:gravel:80"
-    - "minecraft:dirt:20"
+    - "minecraft:gravel:75"
+    - "minecraft:dirt:25"
   deep:
     - "minecraft:stone:95"
     - "minecraft:andesite:5"
 
-ocean-floor:
-  enabled: true
-  chance: 30
-  blocks:
-    - "minecraft:blue_ice"
-    - "minecraft:packed_ice"
-
 flora:
   grass-chance: 0
-  water-flora:
-    seagrass-chance: 10
-    kelp-chance: 5
+  flowers:
+    chance: 0
+    types: []
 
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.035
-  threshold: 0.65
+  mode: "BOTH"
+  noise-frequency: 0.040
+  threshold: 0.60
+  spaghetti-threshold: 0.022
   dynamic-lava: false
   base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false

@@ -1,54 +1,65 @@
 # ==========================================================
 # BIOME: ORMAN (Forest)
+# Sıcaklık/Nem Matrisi: temp=0.55, humid=0.65
+# Konumu: Ilık-nemli. Plains ile Jungle/Swamp arasında.
 # ==========================================================
 name: "Forest"
 temperature: 0.55
-humidity: 0.7
-color-style: "BRIGHT_GREEN"
+humidity: 0.65
 
-# --- Modüler Bağlantılar (YENİ SİSTEM) ---
-ore-profile: "default_ores"  # data/ores/default_ores.yml dosyasını okuyacak
-tree-profile: "forest_trees" # data/trees/forest_trees.yml dosyasını okuyacak
+ore-profile: "default_ores"
+tree-profile: "forest_trees"
 
-# --- Arazi Matematigi (3D Noise Ayarlari) ---
 terrain:
   type: "NORMAL"
   base-height: 68
-  height-variation: 12
-  roughness: 0.007
+  height-variation: 28
+  roughness: 0.009
+  water-level: 62
 
 river:
   enabled: true
-  width: 0.08
-  depth: 16
+  width: 0.06
+  depth: 14
 
-# --- Katmanlar ve Bloklar ---
 blocks:
   sub-depth: 4
   surface:
-    - "minecraft:grass_block:85"
-    - "minecraft:coarse_dirt:10"
-    - "minecraft:podzol:5"
+    - "minecraft:grass_block:80"
+    - "minecraft:coarse_dirt:12"
+    - "minecraft:podzol:8"
+  rocky:
+    - "minecraft:stone:75"
+    - "minecraft:mossy_cobblestone:25"
   sub:
-    - "minecraft:dirt:90"
-    - "minecraft:coarse_dirt:10"
+    - "minecraft:dirt:88"
+    - "minecraft:coarse_dirt:12"
   deep:
-    - "minecraft:stone:95"
-    - "minecraft:andesite:5"
+    - "minecraft:stone:90"
+    - "minecraft:andesite:10"
 
-# --- Yuzey Suslemeleri (Flora) ---
 flora:
-  grass-chance: 40
+  grass-chance: 45
   flowers:
-    chance: 5
+    chance: 8
     types:
-      - "minecraft:dandelion"
-      - "minecraft:poppy"
+      - "minecraft:dandelion:40"
+      - "minecraft:poppy:35"
+      - "minecraft:lily_of_the_valley:25"
 
-# --- MAĞARALAR (3D Noise & Vanilla) ---
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.035
-  threshold: 0.65
+  mode: "BOTH"
+  noise-frequency: 0.045
+  threshold: 0.57
+  spaghetti-threshold: 0.025
   dynamic-lava: true
   base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false

@@ -1,34 +1,43 @@
+# ==========================================================
+# BIOME: KAR / TUNDRA (Snowy_Tundra)
+# Sıcaklık/Nem Matrisi: temp=0.05, humid=0.22
+# Konumu: En soğuk kara biyomu. Matrisin sol-alt köşesi.
+# Taiga ile bitişik (0.18/0.68) — soğuk-kuru'dan soğuk-neme geçiş.
+# ==========================================================
 name: "Snowy_Tundra"
-temperature: 0.0
-humidity: 0.3
-color-style: "SNOWY"
+temperature: 0.05
+humidity: 0.22
 
 ore-profile: "default_ores"
 tree-profile: "none"
 
 terrain:
   type: "NORMAL"
-  base-height: 67
-  height-variation: 15
-  roughness: 0.009
+  base-height: 66
+  height-variation: 20
+  roughness: 0.010
+  water-level: 62
 
 river:
   enabled: true
-  width: 0.08
-  depth: 16
+  width: 0.052
+  depth: 11
 
 blocks:
   sub-depth: 4
   surface:
-    - "minecraft:grass_block:85"
-    - "minecraft:coarse_dirt:10"
-    - "minecraft:podzol:5"
+    - "minecraft:snow_block:65"
+    - "minecraft:powder_snow:20"
+    - "minecraft:grass_block:15"
+  rocky:
+    - "minecraft:stone:65"
+    - "minecraft:packed_ice:35"
   sub:
-    - "minecraft:dirt:90"
-    - "minecraft:coarse_dirt:10"
+    - "minecraft:dirt:65"
+    - "minecraft:gravel:35"
   deep:
-    - "minecraft:stone:95"
-    - "minecraft:andesite:5"
+    - "minecraft:stone:90"
+    - "minecraft:andesite:10"
 
 flora:
   grass-chance: 0
@@ -37,8 +46,18 @@ flora:
     types: []
 
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.035
-  threshold: 0.65
+  mode: "BOTH"
+  noise-frequency: 0.043
+  threshold: 0.58
+  spaghetti-threshold: 0.023
   dynamic-lava: true
   base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false

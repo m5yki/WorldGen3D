@@ -1,45 +1,67 @@
+# ==========================================================
+# BIOME: SAVANNA (Savanna)
+# Sıcaklık/Nem Matrisi: temp=0.78, humid=0.28
+# Konumu: Sıcak-kuru. Desert (0.95/0.05) ile Plains (0.45/0.30)
+# arasındaki geçiş biyomu. Kıyı tamponuyla çöl yerine
+# bu biyom kıyıya çıkar — çok daha mantıklı görünür.
+# ==========================================================
 name: "Savanna"
-temperature: 0.8
-humidity: 0.2
-color-style: "OLIVE"
+temperature: 0.78
+humidity: 0.28
 
 ore-profile: "default_ores"
 tree-profile: "savanna_trees"
 
 terrain:
-  type: "CANYON"
-  base-height: 72
-  height-variation: 20
-  roughness: 0.006
+  type: "NORMAL"
+  base-height: 70
+  height-variation: 22
+  roughness: 0.007
+  water-level: 62
 
 river:
   enabled: true
-  width: 0.08
-  depth: 16
+  width: 0.055
+  depth: 13
 
 blocks:
   sub-depth: 4
   surface:
-    - "minecraft:grass_block:85"
-    - "minecraft:coarse_dirt:10"
-    - "minecraft:podzol:5"
+    - "minecraft:grass_block:60"
+    - "minecraft:coarse_dirt:30"
+    - "minecraft:terracotta:10"
+  rocky:
+    - "minecraft:stone:60"
+    - "minecraft:terracotta:25"
+    - "minecraft:red_sandstone:15"
   sub:
-    - "minecraft:dirt:90"
-    - "minecraft:coarse_dirt:10"
+    - "minecraft:dirt:70"
+    - "minecraft:coarse_dirt:30"
   deep:
-    - "minecraft:stone:95"
-    - "minecraft:andesite:5"
+    - "minecraft:stone:85"
+    - "minecraft:terracotta:15"
 
 flora:
-  grass-chance: 60
+  grass-chance: 55
   flowers:
-    chance: 2
+    chance: 3
     types:
-      - "minecraft:tall_grass"
+      - "minecraft:tall_grass:70"
+      - "minecraft:dead_bush:30"
 
 caves:
-  mode: "CUSTOM"
-  noise-frequency: 0.035
-  threshold: 0.65
+  mode: "BOTH"
+  noise-frequency: 0.043
+  threshold: 0.59
+  spaghetti-threshold: 0.023
   dynamic-lava: true
   base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false

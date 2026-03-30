@@ -1,0 +1,64 @@
+# ==========================================================
+# BIOME: BUZUL (Glacier)
+# Soğuk (temp<0.15) + yüksek kıta + alçak rölatif rakım → buzul vadisi.
+# Matrise girmez, CustomBiomeProvider'da özel koşulla atanır.
+# ==========================================================
+name: "Glacier"
+temperature: 0.04
+humidity: 0.18
+
+ore-profile: "default_ores"
+tree-profile: "none"
+
+terrain:
+  type: "NORMAL"
+  base-height: 72
+  height-variation: 12
+  roughness: 0.005
+  water-level: 62
+
+river:
+  enabled: false
+
+blocks:
+  sub-depth: 6
+  surface:
+    - "minecraft:packed_ice:60"
+    - "minecraft:blue_ice:25"
+    - "minecraft:snow_block:15"
+  rocky:
+    - "minecraft:packed_ice:70"
+    - "minecraft:stone:30"
+  sub:
+    - "minecraft:packed_ice:80"
+    - "minecraft:stone:20"
+  deep:
+    - "minecraft:stone:88"
+    - "minecraft:deepslate:12"
+
+flora:
+  grass-chance: 0
+  flowers:
+    chance: 0
+    types: []
+
+caves:
+  # Buzul mağaraları — sadece peynir tipi, büyük boşluklar
+  mode: "CHEESE"
+  noise-frequency: 0.038
+  threshold: 0.55
+  spaghetti-threshold: 0.020
+  dynamic-lava: false
+  base-lava-level: -54
+
+glacier:
+  enabled: true
+
+floating-islands:
+  enabled: false
+
+trench:
+  enabled: false
+
+canyon:
+  enabled: false

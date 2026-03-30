@@ -1,0 +1,68 @@
+# ==========================================================
+# BIOME: YANARDAĞ (Volcano)
+# Çok nadir. Çok yüksek kıta (>0.50) + çok yüksek elevation (>0.60)
+# VolcanoShaper (Aşama 3'te) bu biyomu tanıyarak konisi ve krateri üretir.
+# ==========================================================
+name: "Volcano"
+temperature: 0.88
+humidity: 0.18
+
+ore-profile: "default_ores"
+tree-profile: "none"
+
+terrain:
+  # VOLCANO tipi → VolcanoShaper'ı tetikler (Aşama 3'te kodlanacak)
+  type: "VOLCANO"
+  base-height: 80
+  height-variation: 90
+  roughness: 0.014
+  water-level: 62
+
+volcano:
+  # Aktif yanardağ: zirve lav gölüyle, inaktif: obsidyen krateriyle
+  active: true
+  cone-radius: 60       # Yatay konik yapının yarıçapı
+  crater-radius: 12     # Krater ağzının yarıçapı
+  lava-level: 140       # Lav gölünün y yüksekliği
+
+river:
+  enabled: false
+
+blocks:
+  sub-depth: 4
+  surface:
+    - "minecraft:basalt:50"
+    - "minecraft:blackstone:30"
+    - "minecraft:magma_block:20"
+  rocky:
+    - "minecraft:basalt:60"
+    - "minecraft:blackstone:40"
+  sub:
+    - "minecraft:basalt:70"
+    - "minecraft:stone:30"
+  deep:
+    - "minecraft:stone:75"
+    - "minecraft:deepslate:25"
+
+flora:
+  grass-chance: 0
+  flowers:
+    chance: 0
+    types: []
+
+caves:
+  mode: "CHEESE"
+  noise-frequency: 0.040
+  threshold: 0.60
+  spaghetti-threshold: 0.020
+  dynamic-lava: true
+  base-lava-level: -54
+
+canyon:
+  enabled: false
+glacier:
+  enabled: false
+trench:
+  enabled: false
+floating-islands:
+  enabled: false
