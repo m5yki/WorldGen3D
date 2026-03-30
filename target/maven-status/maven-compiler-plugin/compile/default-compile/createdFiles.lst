@@ -6,6 +6,7 @@ me\maykitron\worldgen3d\manager\LangManager.class
 me\maykitron\worldgen3d\generator\CustomBiomeProvider$BiomeData.class
 me\maykitron\worldgen3d\manager\BiomeColorManager.class
 me\maykitron\worldgen3d\generator\CustomChunkGenerator$RandomBlockSelector.class
+me\maykitron\worldgen3d\shaper\RockyShaper.class
 me\maykitron\worldgen3d\shaper\VolcanoShaper.class
 me\maykitron\worldgen3d\generator\CustomChunkGenerator$TerrainData.class
 me\maykitron\worldgen3d\shaper\CanyonShaper.class
@@ -46,6 +47,7 @@ me\maykitron\worldgen3d\commands\TestCommand.class
 me\maykitron\worldgen3d\layer\StandardLayer.class
 me\maykitron\worldgen3d\manager\BlockPlacer.class
 me\maykitron\worldgen3d\populator\SchematicPopulator.class
+me\maykitron\worldgen3d\shaper\UnderwaterShaper.class
 me\maykitron\worldgen3d\context\BlockContext.class
 me\maykitron\worldgen3d\manager\CommandManager.class
 me\maykitron\worldgen3d\generator\BiomeBlender$BiomeCache.class

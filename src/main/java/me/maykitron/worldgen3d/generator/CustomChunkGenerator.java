@@ -29,13 +29,6 @@ import java.util.Random;
 
 public class CustomChunkGenerator extends ChunkGenerator {
 
-    // ==========================================================
-    // GLOBAL SU SEVİYESİ
-    // Tüm dünyada tek bir su referansı. Kara biyomlar bu
-    // seviyenin altına inmez — YML'deki waterLevel artık
-    // sadece nehir/okyanus hesaplarında kullanılır, kara
-    // yüzeyi asla bu seviyenin altında üretilmez.
-    // ==========================================================
     public static final int GLOBAL_SEA_LEVEL = 62;
 
     private final WorldGen3D plugin;
@@ -56,18 +49,22 @@ public class CustomChunkGenerator extends ChunkGenerator {
     private SimplexOctaveGenerator floatingNoise;
     private SimplexOctaveGenerator trenchNoise;
     private SimplexOctaveGenerator glacierNoise;
+    private SimplexOctaveGenerator underwaterNoise; // YENİ
+    private SimplexOctaveGenerator rockyNoise;      // YENİ
 
     // --- Shaper'lar ---
-    private RiverShaper        riverShaper;
-    private MountainShaper     mountainShaper;
-    private OceanShaper        oceanShaper;
-    private BeachShaper        beachShaper;
-    private CaveShaper         caveShaper;
-    private CanyonShaper       canyonShaper;
-    private VolcanoShaper      volcanoShaper;
+    private RiverShaper          riverShaper;
+    private MountainShaper       mountainShaper;
+    private OceanShaper          oceanShaper;
+    private BeachShaper          beachShaper;
+    private CaveShaper           caveShaper;
+    private CanyonShaper         canyonShaper;
+    private VolcanoShaper        volcanoShaper;
     private FloatingIslandShaper floatingIslandShaper;
-    private OceanTrenchShaper  oceanTrenchShaper;
-    private GlacierShaper      glacierShaper;
+    private OceanTrenchShaper    oceanTrenchShaper;
+    private GlacierShaper        glacierShaper;
+    private UnderwaterShaper     underwaterShaper;  // YENİ
+    private RockyShaper          rockyShaper;       // YENİ
 
     private boolean isNoiseInitialized = false;
 
@@ -108,28 +105,32 @@ public class CustomChunkGenerator extends ChunkGenerator {
         if (isNoiseInitialized) return;
         long seed = worldInfo.getSeed();
 
-        heightNoise   = new SimplexOctaveGenerator(new Random(seed),           10);
-        detailNoise   = new SimplexOctaveGenerator(new Random(seed * 2L + 31),  4);
-        caveNoise     = new SimplexOctaveGenerator(new Random(seed * 3L + 7),   4);
-        cave2Noise    = new SimplexOctaveGenerator(new Random(seed * 7L + 13),  4);
-        riverNoise    = new SimplexOctaveGenerator(new Random(seed * 5L + 19),  4);
-        mountainNoise = new SimplexOctaveGenerator(new Random(seed * 6L + 23),  6);
-        canyonNoise   = new SimplexOctaveGenerator(new Random(seed * 9L + 37),  4);
-        volcanoNoise  = new SimplexOctaveGenerator(new Random(seed * 11L + 41), 4);
-        floatingNoise = new SimplexOctaveGenerator(new Random(seed * 13L + 53), 4);
-        trenchNoise   = new SimplexOctaveGenerator(new Random(seed * 15L + 59), 4);
-        glacierNoise  = new SimplexOctaveGenerator(new Random(seed * 17L + 61), 4);
+        heightNoise     = new SimplexOctaveGenerator(new Random(seed),           10);
+        detailNoise     = new SimplexOctaveGenerator(new Random(seed * 2L + 31),  4);
+        caveNoise       = new SimplexOctaveGenerator(new Random(seed * 3L + 7),   4);
+        cave2Noise      = new SimplexOctaveGenerator(new Random(seed * 7L + 13),  4);
+        riverNoise      = new SimplexOctaveGenerator(new Random(seed * 5L + 19),  4);
+        mountainNoise   = new SimplexOctaveGenerator(new Random(seed * 6L + 23),  6);
+        canyonNoise     = new SimplexOctaveGenerator(new Random(seed * 9L + 37),  4);
+        volcanoNoise    = new SimplexOctaveGenerator(new Random(seed * 11L + 41), 4);
+        floatingNoise   = new SimplexOctaveGenerator(new Random(seed * 13L + 53), 4);
+        trenchNoise     = new SimplexOctaveGenerator(new Random(seed * 15L + 59), 4);
+        glacierNoise    = new SimplexOctaveGenerator(new Random(seed * 17L + 61), 4);
+        underwaterNoise = new SimplexOctaveGenerator(new Random(seed * 19L + 71), 4); // YENİ
+        rockyNoise      = new SimplexOctaveGenerator(new Random(seed * 23L + 83), 4); // YENİ
 
-        riverShaper        = new RiverShaper(riverNoise);
-        mountainShaper     = new MountainShaper(mountainNoise);
-        oceanShaper        = new OceanShaper();
-        beachShaper        = new BeachShaper();
-        caveShaper         = new CaveShaper(caveNoise, cave2Noise);
-        canyonShaper       = new CanyonShaper(canyonNoise);
-        volcanoShaper      = new VolcanoShaper(volcanoNoise);
+        riverShaper          = new RiverShaper(riverNoise);
+        mountainShaper       = new MountainShaper(mountainNoise);
+        oceanShaper          = new OceanShaper();
+        beachShaper          = new BeachShaper();
+        caveShaper           = new CaveShaper(caveNoise, cave2Noise);
+        canyonShaper         = new CanyonShaper(canyonNoise);
+        volcanoShaper        = new VolcanoShaper(volcanoNoise);
         floatingIslandShaper = new FloatingIslandShaper(floatingNoise);
-        oceanTrenchShaper  = new OceanTrenchShaper(trenchNoise);
-        glacierShaper      = new GlacierShaper(glacierNoise);
+        oceanTrenchShaper    = new OceanTrenchShaper(trenchNoise);
+        glacierShaper        = new GlacierShaper(glacierNoise);
+        underwaterShaper     = new UnderwaterShaper(underwaterNoise); // YENİ
+        rockyShaper          = new RockyShaper(rockyNoise);           // YENİ
 
         biomeProvider.ensureInitialized(worldInfo);
         isNoiseInitialized = true;
@@ -162,22 +163,29 @@ public class CustomChunkGenerator extends ChunkGenerator {
                 double baseHeight = biomeBlender.getBlendedHeight(
                         realX, realZ, heightNoise, detailNoise, biomeCache);
 
-                // =====================================================
-                // SU SEVİYESİ KORUMASI
-                // Kara biyomlar asla GLOBAL_SEA_LEVEL'ın altına inmez.
-                // Su biyomları (okyanus, plaj) bu kontrol dışındadır.
-                // =====================================================
-                boolean isWaterBiome = tData.isWaterBiome;
-                if (!isWaterBiome) {
-                    // Kara yüzeyi en az deniz seviyesi + 2 blok yukarıda olmalı
+                // Ana zemin hiçbir zaman 64'ün altına inmesin (okyanuslar hariç)
+                if (!tData.isWaterBiome) {
                     baseHeight = Math.max(baseHeight, GLOBAL_SEA_LEVEL + 2);
                 }
 
+                // Yüzeyin eğimi hesaplanıyor (Bu değer BlockContext ile StandardLayer'a gider ve Rocky/Surface ayrımını yapar)
                 double slopeX = Math.abs(baseHeight - biomeBlender.getBlendedHeight(
                         realX + 1, realZ, heightNoise, detailNoise, biomeCache));
                 double slopeZ = Math.abs(baseHeight - biomeBlender.getBlendedHeight(
                         realX, realZ + 1, heightNoise, detailNoise, biomeCache));
                 double currentSlope = Math.max(slopeX, slopeZ);
+
+                // Lokal su seviyesi hesaplaması (Nehirler ve Göller için)
+                int localWaterLevel = GLOBAL_SEA_LEVEL;
+                if (tData.riverEnabled) {
+                    double rNoise = riverNoise.noise(realX * 0.001, realZ * 0.001, 0.5, 0.5, true);
+                    double riverValley = Math.abs(rNoise);
+                    if (riverValley < tData.riverWidth) {
+                        double carveForce = (tData.riverWidth - riverValley) / tData.riverWidth;
+                        int riverWaterLevel = (int) (baseHeight - (carveForce * 4.0));
+                        localWaterLevel = Math.max(GLOBAL_SEA_LEVEL, riverWaterLevel);
+                    }
+                }
 
                 int solidDepth = 0;
                 boolean hasHitSurface = false;
@@ -185,14 +193,20 @@ public class CustomChunkGenerator extends ChunkGenerator {
                 for (int y = 319; y >= worldInfo.getMinHeight(); y--) {
                     double density = baseHeight - y;
 
-                    // ==============================================
-                    // SHAPER SIRASI (büyük form → küçük form → boşluk)
-                    // ==============================================
+                    // 1. ÖNCE BÜYÜK YERYÜZÜ ŞEKİLLERİ OLUŞUR
                     density = mountainShaper.apply(realX, y, realZ, density, tData);
                     density = volcanoShaper.apply(realX, y, realZ, density, tData);
                     density = canyonShaper.apply(realX, y, realZ, density, tData);
                     density = glacierShaper.apply(realX, y, realZ, density, tData);
-                    density = riverShaper.apply(realX, y, realZ, density, tData);
+
+                    // 2. SONRA FİZİKSEL KAYALIK ÇIKINTILARI EKLENİR (YENİ)
+                    density = rockyShaper.apply(realX, y, realZ, density, tData);
+
+                    // 3. NEHİR VE SU ALTI OYMALARI YAPILIR (YENİ)
+                    density = riverShaper.apply(realX, y, realZ, density, baseHeight, tData);
+                    density = underwaterShaper.apply(realX, y, realZ, density, localWaterLevel, tData);
+
+                    // 4. DENİZ, PLAJ VE MAĞARALAR İŞLENİR
                     density = oceanTrenchShaper.apply(realX, y, realZ, density, tData);
                     density = floatingIslandShaper.apply(realX, y, realZ, density, tData);
                     density = caveShaper.apply(realX, y, realZ, density, tData);
@@ -206,9 +220,9 @@ public class CustomChunkGenerator extends ChunkGenerator {
                         BlockContext ctx = new BlockContext();
                         ctx.x = realX; ctx.y = y; ctx.z = realZ;
                         ctx.baseHeight = baseHeight;
-                        ctx.slope = currentSlope;
+                        ctx.slope = currentSlope; // Bu değer YML'deki rocky mi surface mi okuyacağını belirler
                         ctx.density = density;
-                        ctx.isNearWater = (y >= GLOBAL_SEA_LEVEL - 1 && y <= GLOBAL_SEA_LEVEL + 1);
+                        ctx.isNearWater = (y >= localWaterLevel - 1 && y <= localWaterLevel + 1);
                         ctx.isUnderground = (y < baseHeight - 8);
                         ctx.biome = tData;
                         ctx.random = random;
@@ -231,8 +245,8 @@ public class CustomChunkGenerator extends ChunkGenerator {
 
                     } else {
                         solidDepth = 0;
-                        // Su sadece deniz seviyesine kadar doldurulur
-                        if (!hasHitSurface && y <= GLOBAL_SEA_LEVEL) {
+                        // Nehirlerin ve göllerin kendi yüksekliklerinde su dolması
+                        if (!hasHitSurface && y <= localWaterLevel) {
                             chunkData.setBlock(x, y, z, Material.WATER);
                         } else if (hasHitSurface && y <= tData.baseLavaLevel) {
                             chunkData.setBlock(x, y, z, Material.LAVA);
@@ -298,9 +312,9 @@ public class CustomChunkGenerator extends ChunkGenerator {
         public final int     baseHeight;
         public final int     heightVariation;
         public final double  roughness;
-        public final int     waterLevel;   // nehir/okyanus iç hesapları için
+        public final int     waterLevel;
         public final int     subDepth;
-        public final boolean isWaterBiome; // true → su seviyesi koruması devredışı
+        public final boolean isWaterBiome;
 
         public final String caveMode;
         public final double caveFreq;
@@ -355,7 +369,6 @@ public class CustomChunkGenerator extends ChunkGenerator {
             this.waterLevel     = cfg.getInt("terrain.water-level", GLOBAL_SEA_LEVEL);
             this.subDepth       = cfg.getInt("blocks.sub-depth", 4);
 
-            // Su biyomu tespiti: isim veya açık flag
             String lower = this.name.toLowerCase();
             this.isWaterBiome = cfg.getBoolean("terrain.is-water-biome",
                     lower.contains("ocean") || lower.contains("beach"));
@@ -370,30 +383,26 @@ public class CustomChunkGenerator extends ChunkGenerator {
             this.spaghettiThreshold  = cfg.getDouble("caves.spaghetti-threshold", 0.025);
             this.baseLavaLevel       = cfg.getInt("caves.base-lava-level", -54);
 
-            // Kanyon
             this.canyonEnabled = cfg.getBoolean("canyon.enabled", false);
             this.canyonFreq    = cfg.getDouble("canyon.noise-frequency", 0.0018);
             this.canyonWidth   = cfg.getDouble("canyon.width", 0.055);
             this.canyonDepth   = cfg.getInt("canyon.depth", 60);
 
-            // Yanardağ
-            this.volcanoActive       = cfg.getBoolean("volcano.active", true);
+            this.volcanoActive       = cfg.getBoolean("volcano.active", false);
             this.volcanoLavaLevel    = cfg.getInt("volcano.lava-level", 140);
             this.volcanoConeRadius   = cfg.getInt("volcano.cone-radius", 60);
             this.volcanoCraterRadius = cfg.getInt("volcano.crater-radius", 12);
 
-            // Yüzer ada
             this.floatingIslandsEnabled = cfg.getBoolean("floating-islands.enabled", false);
             this.floatingIslandMinY     = cfg.getInt("floating-islands.min-y", 150);
             this.floatingIslandMaxY     = cfg.getInt("floating-islands.max-y", 220);
 
-            // Okyanus hendeği
             this.trenchEnabled    = cfg.getBoolean("trench.enabled", false);
             this.trenchExtraDepth = cfg.getInt("trench.extra-depth", 45);
 
-            // Buzul
             this.glacierEnabled = cfg.getBoolean("glacier.enabled", false);
 
+            // İŞTE BURASI YML'DEN "ROCKY" VE "SURFACE" DİZİLERİNİ OKUYAN YER
             RandomBlockSelector surf  = new RandomBlockSelector(cfg.get("blocks.surface"), Material.GRASS_BLOCK);
             RandomBlockSelector rocky = new RandomBlockSelector(cfg.get("blocks.rocky"),   Material.STONE);
             this.surfaceLayer = new StandardLayer(surf, rocky);
